@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon src/index.ts"
   },
   "keywords": [],
   "author": "",
@@ -16,9 +17,12 @@
     "@types/uuid": "^10.0.0",
     "express": "^4.21.2",
     "redis": "^4.7.0",
-    "ts-node": "^10.9.2",
-    "typescript": "^5.8.2",
     "uuid": "^11.1.0",
     "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.2"
   }
 }

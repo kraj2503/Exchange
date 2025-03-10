@@ -8,10 +8,10 @@ interface Bid extends Order {
   side: "bid";
 }
 interface Ask extends Order {
-  side: "bid";
+  side: "ask";
 }
 
-export const orderBook = {
+export const orderBook: { Bid: Bid[]; Ask: Ask[] } = {
   Bid: [],
   Ask: [],
 };
