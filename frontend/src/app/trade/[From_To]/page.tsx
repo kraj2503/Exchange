@@ -10,11 +10,10 @@ export default function Page() {
 
   return (
     <>
-      {/* <div>this is {params.From_To}</div> */}
     <div className="bg-slate-950 h-screen text-white grid grid-cols-6" >
 
-    <div className="col-span-4 bg-red-300">
-      <Ticker FromTo={params.From_To} change={{ number: 5.23, percentage: 2.5 }} 
+    <div className="col-span-4 my-5 mx-3 ">
+      <Ticker Ticker={'1809'} FromTo={params.From_To} change={{ number: 5.23, percentage: 2.5 }} 
       
       high= {'1995.65'}
       low = {'1867.45'}
@@ -22,7 +21,7 @@ export default function Page() {
       
       />
     </div>
-    <div>
+    <div className="">
         This is place order
     </div>
     </div>
