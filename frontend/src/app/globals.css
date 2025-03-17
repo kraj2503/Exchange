@@ -114,10 +114,42 @@
 }
 
 @layer base {
-  * {
-    @apply border-border outline-ring/50;
-  }
-  body {
-    @apply bg-background text-foreground;
+  :root {
+    /* Font Sizes */
+    --font-size-xs: 0.7rem;
+    --font-size-sm: 0.8rem;
+
+    /* Custom Colors */
+    --color-green-background-transparent: rgba(0, 194, 120, 0.12);
+    --color-red-background-transparent: rgba(234, 56, 59, 0.12);
+    --color-base-background-l2: rgb(32, 33, 39);
+    --color-base-background-l3: rgb(32, 33, 39);
+    --color-green-primary-button-background: rgb(0, 194, 120);
+
+    /* Border Colors */
+    --color-red-border: rgba(234, 56, 59, 0.5);
+    --color-green-border: rgba(0, 194, 120, 0.4);
+    --color-base-border-med: #cccccc;
+    --color-accent-blue: rgb(76, 148, 255);
+    --color-base-border-light: rgb(32, 33, 39);
+    --color-base-text-high-emphasis: rgb(244, 244, 246);
+
+    /* Text Colors */
+    --color-green-primary-button-text: rgb(81, 199, 122);
+    --color-red-primary-button-text: rgb(217, 29, 39);
   }
 }
+
+/* Custom Utilities (if needed) */
+@layer utilities {
+  /* Radial Gradient */
+  .bg-gradient-radial {
+    background-image: radial-gradient(var(--tw-gradient-stops));
+  }
+
+  /* Conic Gradient */
+  .bg-gradient-conic {
+    background-image: conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops));
+  }
+}
+

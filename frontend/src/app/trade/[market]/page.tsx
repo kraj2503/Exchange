@@ -44,7 +44,7 @@ export default function Page() {
             trades={ticker?.trades ?? ""}
           />
         </div>
-        <div className="">
+        <div className="col-span-2 overflow-">
           <TradeUI   />
         </div>
       </div>

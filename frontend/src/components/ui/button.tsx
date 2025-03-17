@@ -21,7 +21,8 @@ const buttonVariants = cva(
           "hover:opacity-80 hover:bg-gray-800  dark:hover:bg-accent/50",
         link: "text-primary underline-offset-4 hover:underline",
         signIn:"text-nowrap rounded-lg bg-emerald-900 px-2 py-1.5 text-xs font-semibold text-green-300 hover:opacity-90 ",
-        signUp:"text-nowrap rounded-lg bg-blue-900 px-2 py-1.5 text-xs font-semibold text-sky-300 hover:opacity-90",
+        signUp:" rounded-lg bg-blue-900 px-2 py-1.5 text-xs font-semibold text-sky-300 hover:opacity-90",
+        market: "text-nowrap, bg-black px-2 py-1"
       },
       size: {
         default: "h-9 px-4 py-2 has-[>svg]:px-3",
