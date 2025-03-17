@@ -4,10 +4,11 @@ const express = require("express")
 const axios = require("axios")
 require('dotenv').config()
 const app = express()
-
+const cors = require("cors");
 
 const BASE_URL = process.env.BASE_URL
 console.log(BASE_URL)
+app.use(cors());
 app.get('/v1/klines', async (req, res) => {
         try {
 
@@ -45,6 +46,10 @@ app.get('/v1/depth', async (req,res)=>{
 
 })
 
+app.get('/v1/tickers',async(req,res)=>{
+        const result = await axios.get(`${BASE_URL}tickers`)
+        res.json(result.data)
+})
 
 
 app.use(function (err, req, res, next) {
