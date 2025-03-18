@@ -121,13 +121,13 @@
 
     /* Custom Colors */
     --color-green-background-transparent: rgba(0, 194, 120, 0.12);
-    --color-red-background-transparent: rgba(234, 56, 59, 0.12);
+    --color-red-background-transparent: rgba(167, 55, 57, 0.632);
     --color-base-background-l2: rgb(32, 33, 39);
     --color-base-background-l3: rgb(32, 33, 39);
     --color-green-primary-button-background: rgb(0, 194, 120);
 
     /* Border Colors */
-    --color-red-border: rgba(234, 56, 59, 0.5);
+    --color-red-border: rgba(223, 69, 72, 0.5);
     --color-green-border: rgba(0, 194, 120, 0.4);
     --color-base-border-med: #cccccc;
     --color-accent-blue: rgb(76, 148, 255);
@@ -136,7 +136,7 @@
 
     /* Text Colors */
     --color-green-primary-button-text: rgb(81, 199, 122);
-    --color-red-primary-button-text: rgb(217, 29, 39);
+    --color-red-primary-button-text: rgb(254, 33, 33);
   }
 }
 

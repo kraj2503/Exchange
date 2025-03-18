@@ -11,6 +11,7 @@ export default function Page() {
   
   const [ticker, setTicker] = useState<Ticker | null>(null);
   const { market } = useParams<{ market: string }>();
+ 
   useRedirect();
   
 
@@ -29,7 +30,7 @@ export default function Page() {
   }, [market]);
   return <div>
     
-    <div className="bg-slate-950 h-screen text-white grid grid-cols-6">
+    <div className="bg-slate-950 h-screen text-white grid grid-cols-5 overflow-hidden">
         <div className="col-span-4 my-5 mx-3 ">
           <TickerBar
             symbol={ticker?.symbol ?? ""}
@@ -44,8 +45,8 @@ export default function Page() {
             trades={ticker?.trades ?? ""}
           />
         </div>
-        <div className="col-span-2 overflow-">
-          <TradeUI   />
+        <div className="col-span-1 overflow-">
+          <TradeUI   lastprice={ticker?.lastPrice ?? ""} />
         </div>
       </div>
 
