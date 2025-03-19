@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Ticker } from "./types";
+import { KLine, Ticker } from "./types";
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
 export async function getTicker(market: string): Promise<Ticker | null> {
@@ -16,4 +16,19 @@ export async function getTickers(): Promise<Ticker[]> {
   const res = await axios.get<Ticker[]>(`${BASE_URL}tickers`);
 
   return res.data;
+}
+
+export async function getKlines(
+  market: string,
+  interval: string,
+  startTime: number,
+  endTime: number
+): Promise<KLine[]> {
+  console.log(BASE_URL)
+  const response = await axios.get(
+    `${BASE_URL}klines?symbol=${market}&interval=${interval}&startTime=${startTime}&endTime=${endTime}`
+  );
+
+  const data: KLine[] = response.data as KLine[];
+  return data.sort((x, y) => (Number(x.end) < Number(y.end) ? -1 : 1));
 }

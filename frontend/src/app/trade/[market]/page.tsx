@@ -6,14 +6,13 @@ import { getTicker } from "@/app/lib/httpClient";
 import TickerBar from "@/components/TickerBar";
 import { Ticker } from "@/app/lib/types";
 import { TradeUI } from "@/components/TradeUI";
+import { TradeChart } from "@/components/tradeChart";
 
 export default function Page() {
-  
   const [ticker, setTicker] = useState<Ticker | null>(null);
   const { market } = useParams<{ market: string }>();
- 
+
   useRedirect();
-  
 
   useEffect(() => {
     if (!market) return;
@@ -26,11 +25,11 @@ export default function Page() {
         setTicker(null); // Reset ticker on error
       }
     }
-    fetchTicker()
+    fetchTicker();
   }, [market]);
-  return <div>
-    
-    <div className="bg-slate-950 h-screen text-white grid grid-cols-5 overflow-hidden">
+  return (
+    <div>
+      <div className="bg-slate-950 h-screen text-white grid grid-cols-5 overflow-hidden">
         <div className="col-span-4 my-5 mx-3 ">
           <TickerBar
             symbol={ticker?.symbol ?? ""}
@@ -44,11 +43,15 @@ export default function Page() {
             quoteVolume={ticker?.quoteVolume ?? ""}
             trades={ticker?.trades ?? ""}
           />
+          <div className="mt-10">
+
+          <TradeChart market={market as string} />
+          </div>
         </div>
         <div className="col-span-1 overflow-">
-          <TradeUI   lastprice={ticker?.lastPrice ?? ""} />
+          <TradeUI lastprice={ticker?.lastPrice ?? ""} />
         </div>
       </div>
-
-  </div>;
+    </div>
+  );
 }
