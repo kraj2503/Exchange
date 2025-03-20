@@ -3,7 +3,6 @@ export const AskTable = ({ ask }: { ask: [string, string][] }) => {
   let currentTotal = 0;
   const relevantAsk = ask.slice(0, 15);
 
-  relevantAsk.reverse();
 
   const askWithtotal: [string, string, number][] = [];
 

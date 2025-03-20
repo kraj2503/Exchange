@@ -44,8 +44,9 @@ export default function Page() {
             quoteVolume={ticker?.quoteVolume ?? ""}
             trades={ticker?.trades ?? ""}
           />
-          <div className="flex flex-row h-[620px] border-y border-slate-800 mt-8">
-            <div className="flex flex-col w-[250px] overflow-hidden">
+          
+          <div className="flex   border-y border-slate-800 mt-8">
+            <div className="w-[250px] flex-1/3 pr-3 pt-3 border-2 border-gray-800">
               <TradeChart market={market as string} />
             </div>
             <div className="flex flex-col w-[250px] overflow-hidden">

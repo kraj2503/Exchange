@@ -12,8 +12,9 @@ export function Depth({ market }: { market: string }) {
 
   useEffect(() => {
     getDepth(market).then((d) => {
+        console.log(d.asks)
       setBids(d.bids.reverse());
-      setAsk(d.ask);
+      setAsk(d.asks);
     });
     getTicker(market).then((t) => setPrice(t?.lastPrice));
   }, []);
