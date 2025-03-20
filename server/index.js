@@ -15,7 +15,6 @@ app.get('/v1/klines', async (req, res) => {
                 const { symbol, interval, startTime, endTime } = req.query
                 const result = await axios.get(`${BASE_URL}klines?symbol=${symbol}&interval=${interval}&startTime=${startTime}&endTime=${endTime}`);
 
-                console.log(result.data);
                 res.json(result.data);
         }
         catch {
@@ -28,7 +27,6 @@ app.get('/v1/markets', async (req, res) => {
         try {
                 const { symbol } = req.query
                 const result = await axios.get(`${BASE_URL}markets`)
-                console.log(result.data)
                 res.json(result.data);
         }
         catch {
@@ -41,7 +39,7 @@ app.get('/v1/depth', async (req, res) => {
 
         const { symbol } = req.query
         const result = await axios.get(`${BASE_URL}depth?symbol=${symbol}`)
-        console.log(result.data)
+        console.log("depth")
         res.json(result.data);
 
 })
@@ -50,12 +48,11 @@ app.get('/v1/tickers', async (req, res) => {
         const result = await axios.get(`${BASE_URL}tickers`)
         res.json(result.data)
 })
-app.get('/v1/klines', async (req, res) => {
-        const { market, interval, startTime, endTime } = req.query
-        const result = await axios.get(`${BASE_URL}klines?symbol=${market}&interval=${interval}&startTime=${startTime}&endTime=${endTime}`)
-        console.log(result.data)
-        res.json(result.data);
-})
+// app.get('/v1/klines', async (req, res) => {
+//         const { market, interval, startTime, endTime } = req.query
+//         const result = await axios.get(`${BASE_URL}klines?symbol=${market}&interval=${interval}&startTime=${startTime}&endTime=${endTime}`)
+//         res.json(result.data);
+// })
 
 
 app.use(function (err, req, res, next) {

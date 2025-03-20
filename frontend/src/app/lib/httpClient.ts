@@ -24,11 +24,18 @@ export async function getKlines(
   startTime: number,
   endTime: number
 ): Promise<KLine[]> {
-  console.log(BASE_URL)
+  console.log(BASE_URL);
   const response = await axios.get(
     `${BASE_URL}klines?symbol=${market}&interval=${interval}&startTime=${startTime}&endTime=${endTime}`
   );
 
   const data: KLine[] = response.data as KLine[];
   return data.sort((x, y) => (Number(x.end) < Number(y.end) ? -1 : 1));
+}
+
+export async function getDepth(market: string): Promise<Depth> {
+  const url  = `${BASE_URL}depth?symbol=${market}`
+  console.log(url)
+  const response = await axios.get(url);
+  return response.data;
 }
