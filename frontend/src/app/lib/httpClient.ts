@@ -3,7 +3,6 @@ import { KLine, Ticker } from "./types";
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
 export async function getTicker(market: string): Promise<Ticker | null> {
-  console.log("baseURL", BASE_URL);
   const tickers = await getTickers();
   return tickers.find((t) => t.symbol === market) || null;
 }
