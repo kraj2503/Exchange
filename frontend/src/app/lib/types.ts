@@ -27,3 +27,12 @@ export interface Depth {
   asks: [string, string][],
   lastUpdateId: string
 }
+
+export interface Trade {
+  "id": number,
+  "isBuyerMaker": boolean,
+  "price": string,
+  "quantity": string,
+  "quoteQuantity": string,
+  "timestamp": number
+}

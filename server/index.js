@@ -39,7 +39,6 @@ app.get('/v1/depth', async (req, res) => {
 
         const { symbol } = req.query
         const result = await axios.get(`${BASE_URL}depth?symbol=${symbol}`)
-        console.log("depth")
         res.json(result.data);
 
 })
@@ -53,6 +52,17 @@ app.get('/v1/tickers', async (req, res) => {
 //         const result = await axios.get(`${BASE_URL}klines?symbol=${market}&interval=${interval}&startTime=${startTime}&endTime=${endTime}`)
 //         res.json(result.data);
 // })
+
+
+
+app.get('/v1/trades', async (req, res) => {
+
+
+        const { symbol } = req.query
+        const result = await axios.get(`${BASE_URL}trades?symbol=${symbol}`)
+        res.json(result.data);
+
+})
 
 
 app.use(function (err, req, res, next) {

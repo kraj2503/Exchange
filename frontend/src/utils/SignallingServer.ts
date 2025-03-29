@@ -38,6 +38,7 @@ export class SignalingManager {
 
       if (this.callback[type]) {
         this.callback[type].forEach(({ callback }) => {
+   
           if (type === "ticker") {
             const newTicker: Partial<Ticker> = {
               lastPrice: msg.data.c,
@@ -73,6 +74,12 @@ export class SignalingManager {
   }
 
   async registerCallback(type: string, callback: any, id: string) {
+    this.callback[type] = this.callback[type] || [];
+    this.callback[type].push({ callback, id });
+    // "ticker" => callback
+}
+
+  async deRegisterCallback(type: string, id: string) {
     if (this.callback[type]) {
       const index = this.callback[type].findIndex(
         (callback) => callback.id === id

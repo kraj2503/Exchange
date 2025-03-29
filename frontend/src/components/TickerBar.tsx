@@ -21,28 +21,33 @@ const TickerBar: React.FC<Ticker> = ({
 
   const formatChange = (num: string | number, decimals = 3) => {
     const n = Number(num);
-    return `${n > 0 ? "+" : ""}${formatNumber(n, decimals)}`; // Adds "+" if positive, "-" is already included for negatives
+    return `${n > 0 ? "+" : ""}${formatNumber(n, decimals)}`;
   };
+  const priceChangeColor =
+    Number(priceChange) >= 0 ? "text-green-400" : "text-red-400";
+
   return (
     <div className="no-scrollbar w-full bg-gray-900 rounded-lg flex items-center px-5 py-3 shadow-md">
-      {/* Trading Pair Dropdown */}
       <div className="flex items-center bg-gray-800 rounded-md px-3 py-2 hover:bg-gray-700 cursor-pointer transition">
         <span className="text-white font-medium">{symbol}</span>
         <ChevronDown className="ml-2 text-gray-400" size={18} />
       </div>
 
-      {/* Ticker Name */}
       <div className="flex flex-col text-sm ml-4">
-        <p className="font-semibold text-white text-xl">{formatNumber(lastPrice, 2)}</p>
+        <p className={`font-semibold  text-xl ${priceChangeColor}`}>
+          {formatNumber(lastPrice, 2)}
+        </p>
         <p className="text-gray-400 text-md">{formatNumber(firstPrice, 2)}</p>
       </div>
 
-      {/* 24H Stats */}
       <div className="flex flex-wrap justify-start ml-6 space-x-6">
-        <Stat 
-          label="24H Change" 
-          value={`${formatChange(priceChange, 3)} ${formatChange(priceChangePercent, 2)}%`} 
-          isPositive={Number(priceChange) >= 0} 
+        <Stat
+          label="24H Change"
+          value={`${formatChange(priceChange, 3)} ${formatChange(
+            priceChangePercent,
+            2
+          )}%`}
+          isPositive={Number(priceChange) >= 0}
         />
         <Stat label="24H High" value={formatNumber(high, 2)} />
         <Stat label="24H Low" value={formatNumber(low, 2)} />
@@ -53,10 +58,26 @@ const TickerBar: React.FC<Ticker> = ({
 };
 
 // Reusable component for stats
-const Stat = ({ label, value, isPositive }: { label: string; value: string; isPositive?: boolean }) => (
+const Stat = ({
+  label,
+  value,
+  isPositive,
+}: {
+  label: string;
+  value: string;
+  isPositive?: boolean;
+}) => (
   <div className="flex flex-col text-sm">
     <p className="text-gray-400 text-sm">{label}</p>
-    <span className={`mt-1 tabular-nums text-md  ${isPositive !== undefined ? (isPositive ? "text-green-400" : "text-red-400") : "text-white"}`}>
+    <span
+      className={`mt-1 tabular-nums text-md  ${
+        isPositive !== undefined
+          ? isPositive
+            ? "text-green-400"
+            : "text-red-400"
+          : "text-white"
+      }`}
+    >
       {value}
     </span>
   </div>

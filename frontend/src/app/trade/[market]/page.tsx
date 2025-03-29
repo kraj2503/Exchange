@@ -8,6 +8,7 @@ import { Ticker } from "@/app/lib/types";
 import { TradeUI } from "@/components/TradeUI";
 import { TradeChart } from "@/components/tradeChart";
 import { Depth } from "@/components/depth/Depth";
+import { SignalingManager } from "@/utils/SignallingServer";
 
 export default function Page() {
   const [ticker, setTicker] = useState<Ticker | null>(null);
@@ -16,17 +17,53 @@ export default function Page() {
   useRedirect();
 
   useEffect(() => {
-    if (!market) return;
-    async function fetchTicker() {
-      try {
-        const data = await getTicker(market);
-        setTicker(data);
-      } catch (error) {
-        console.error("Error fetching ticker:", error);
-        setTicker(null); // Reset ticker on error
-      }
-    }
-    fetchTicker();
+    getTicker(market).then(setTicker);
+
+    SignalingManager.getInstance().registerCallback(
+      "ticker",
+      (data: Partial<Ticker>) =>
+        setTicker((prevTicker) => ({
+          firstPrice: data?.firstPrice ?? prevTicker?.firstPrice ?? "",
+          high: data?.high ?? prevTicker?.high ?? "",
+          lastPrice: data?.lastPrice ?? prevTicker?.lastPrice ?? "",
+          low: data?.low ?? prevTicker?.low ?? "",
+          priceChange: data?.priceChange ?? prevTicker?.priceChange ?? "",
+          priceChangePercent:
+            data?.priceChangePercent ?? prevTicker?.priceChangePercent ?? "",
+          quoteVolume: data?.quoteVolume ?? prevTicker?.quoteVolume ?? "",
+          symbol: data?.symbol ?? prevTicker?.symbol ?? "",
+          trades: data?.trades ?? prevTicker?.trades ?? "",
+          volume: data?.volume ?? prevTicker?.volume ?? "",
+        })),
+      `TICKER-${market}`
+    );
+    SignalingManager.getInstance().sendMessage({
+      method: "SUBSCRIBE",
+      params: [`ticker.${market}`],
+    });
+
+    return () => {
+      SignalingManager.getInstance().deRegisterCallback(
+        "ticker",
+        `TICKER-${market}`
+      );
+      SignalingManager.getInstance().sendMessage({
+        method: "UNSUBSCRIBE",
+        params: [`ticker.${market}`],
+      });
+    };
+
+    // if (!market) return;
+    // async function fetchTicker() {
+    //   try {
+    //     const data = await getTicker(market);
+    //     setTicker(data);
+    //   } catch (error) {
+    //     console.error("Error fetching ticker:", error);
+    //     setTicker(null); // Reset ticker on error
+    //   }
+    // }
+    // fetchTicker();
   }, [market]);
   return (
     <div>
@@ -44,7 +81,7 @@ export default function Page() {
             quoteVolume={ticker?.quoteVolume ?? ""}
             trades={ticker?.trades ?? ""}
           />
-          
+
           <div className="flex   border-y border-slate-800 mt-8">
             <div className="w-[250px] flex-1/3 pr-3 pt-3 border-2 border-gray-800">
               <TradeChart market={market as string} />

@@ -1,5 +1,5 @@
 import axios from "axios";
-import { KLine, Ticker } from "./types";
+import { KLine, Ticker, Trade } from "./types";
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
 export async function getTicker(market: string): Promise<Ticker | null> {
@@ -37,4 +37,10 @@ export async function getDepth(market: string): Promise<Depth> {
   console.log(url)
   const response = await axios.get(url);
   return response.data;
+}
+
+export async function getTrades(market: string): Promise<Trade[]> {
+  const response = await axios.get(`${BASE_URL}trades?symbol=${market}`);
+  const data: Trade[] = response.data as Trade[];
+  return data;
 }
