@@ -1,6 +1,7 @@
 import { createClient, RedisClientType } from "redis";
 import { ORDER_UPDATE, TRADE_ADDED } from "./types";
 import { Wsmessage } from "./types/toWs";
+import { MessageToApi } from "./types/toApi";
 
 type DbMessage =
   | {
