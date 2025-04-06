@@ -39,7 +39,7 @@ export class RedisManager {
     });
   }
 
-  private static getInstance() {
+  public static getInstance() {
     if (!this.instance) {
       this.instance = new RedisManager();
     }
