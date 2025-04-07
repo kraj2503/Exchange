@@ -279,6 +279,29 @@ fills.forEach(fill =>{
     writeFileSync("./snapshot.json", JSON.stringify(snapshotSnapshot));
   }
 
+  sendUpdatedDepthAt(price:string, market:string){
+
+    const orderbook = this.orderBook.find(o=>o.ticker()===market);
+    if(!orderbook){
+      return;
+
+    }
+
+    const depth = orderbook.getDepth();
+    const updatedBids = depth?.bids.filter(x=>x[0]===price);
+    const updatedAsks = depth?.asks.filter(x=>x[0]===price);
+    
+    RedisManager.getInstance().publishMessage(`depth@${market}`,{
+      stream:`depth@${market}`,
+      data:{
+        a:updatedAsks.length? updatedAsks:[[price,"0"]],
+        b:updatedBids.length? updatedAsks:[[price,"0"]],
+        e:"depth"
+      }
+    })
+  }
+
+
   setBaseBalances() {
     this.balances.set("1", {
       [BASE_CURRENCY]: {

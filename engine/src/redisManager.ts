@@ -19,7 +19,7 @@ type DbMessage =
   | {
       type: typeof ORDER_UPDATE;
       data: {
-        orderId: String;
+        orderId: string;
         executedQty: number;
         market?: string;
         price?: string;
