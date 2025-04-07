@@ -1,3 +1,4 @@
+import { StringifyOptions } from "node:querystring";
 import { RedisManager } from "../redisManager";
 import {
   CANCEL_ORDER,
@@ -7,8 +8,9 @@ import {
   MessageFromApi,
 } from "../types/fromApi";
 import { ON_RAMP } from "../types/toApi";
-import { Order, OrderBook } from "./orderBook";
+import { Fill, Order, OrderBook } from "./orderBook";
 import { readFileSync, writeFileSync } from "node:fs";
+import { ORDER_UPDATE } from "../types";
 
 interface UserBalance {
   [key: string]: {
@@ -237,6 +239,37 @@ export class Engine {
     this.publishWsTrades(fills, userId, market);
     return { executedQty, fills, orderId: order.orderId };
   }
+
+  addOrderBook(orderBook:OrderBook){
+    this.orderBook.push(orderBook)
+  }
+
+ updateDbOrders(order:Order,executedQty:number, fills:Fill[],market:string){
+    RedisManager.getInstance().pushMessage({
+        type:ORDER_UPDATE,
+        data:{
+            orderId:order.orderId,
+            executedQty:executedQty,
+            market:market,
+            price:order.price.toString(),
+            quantity:order.quantity.toString(),
+            side:order.side
+        }
+    })
+fills.forEach(fill =>{
+    RedisManager.getInstance().pushMessage({
+        type:ORDER_UPDATE,
+        data:{
+            orderId:fill.marketOrderId,
+            executedQty: fill.qty
+        }
+    })
+})
+
+ }
+
+
+
 
   saveSnapshot() {
     const snapshotSnapshot = {
