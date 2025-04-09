@@ -24,7 +24,7 @@ export class RedisManager {
   public sendAndAwait(message: MessageToEngine) {
     return new Promise<MessageFromOrderbook>((resolve) => {
       const id = this.getRandomClientId();
-      console.log("Client Id", id);
+      console.log("Transaction Id", id);
       this.client.subscribe(id, (message) => {
         this.client.unsubscribe(id);
         resolve(JSON.parse(message));
