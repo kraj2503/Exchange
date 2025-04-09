@@ -4,8 +4,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "npx nodemon -e ts  --exec \"tsc && node ./dist/index.js\""
-
+    "start": "npx nodemon -e ts  --exec \"tsc && node ./dist/index.js\"",
+    "start:envWindows": "set WITH_SNAPSHOT=1 && npx nodemon -e ts --exec \"tsc && node ./dist/index.js\"",
+    "start:env": "WITH_SNAPSHOT=1 npx nodemon -e ts --exec \"tsc && node ./dist/index.js\""
   },
   "keywords": [],
   "author": "",

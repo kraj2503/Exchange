@@ -33,11 +33,11 @@ export class Engine {
     } catch (e) {
       console.log("No Snapshot Found");
     }
-
+    
     if (snapShot) {
       console.log("Found Snapshot");
       const snapShotsnapShot = JSON.parse(snapShot.toString());
-      this.orderBook = snapShotsnapShot.orderBook.map((o: any) => {
+      this.orderBook = snapShotsnapShot.orderbooks.map((o: any) => {
         return new OrderBook(
           o.baseAsset,
           o.bids,
