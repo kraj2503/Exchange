@@ -35,6 +35,7 @@ export class Engine {
     }
 
     if (snapShot) {
+      console.log("Found Snapshot");
       const snapShotsnapShot = JSON.parse(snapShot.toString());
       this.orderBook = snapShotsnapShot.orderBook.map((o: any) => {
         new OrderBook(
@@ -47,7 +48,12 @@ export class Engine {
       });
       this.balances = new Map(snapShotsnapShot.balances);
     } else {
-      this.orderBook = [new OrderBook(`ETH`, [], [], 0, 0)];
+      console.log("Creating a new OrderBook");
+      this.orderBook = [
+        new OrderBook(`ETH`, [], [], 0, 0),
+        new OrderBook("BTC", [], [], 0, 0),
+      ];
+      console.log("new OrderBook,", this.orderBook);
       this.setBaseBalances();
     }
   }
@@ -142,16 +148,18 @@ export class Engine {
             },
           });
         } catch (e) {
-          console.log("Error hwile cancelling order");
+          console.log("Error while cancelling order");
           console.log(e);
         }
         break;
       case GET_OPEN_ORDERS:
         try {
+          console.log("inside get_open_orders");
           const openOrderbook = this.orderBook.find(
             (o) => o.ticker() === message.data.market
           );
           if (!openOrderbook) {
+            console.log(this.orderBook);
             throw new Error("No orderbook found");
           }
           const openOrders = openOrderbook.getOpenOrders(message.data.userId);
@@ -167,12 +175,25 @@ export class Engine {
       case ON_RAMP:
         const userId = message.data.userId;
         const amount = Number(message.data.amount);
-        this.onRamp(userId, amount);
+        console.log("Engine got ", userId, amount);
+        const { available, locked } = this.onRamp(userId, amount) || {
+          available: 0,
+          locked: 0,
+        };
+        RedisManager.getInstance().sendToApi(clientId, {
+          type: "ON_RAMP",
+          payload: {
+            available: available,
+            locked: locked,
+          },
+        });
         break;
       case GET_DEPTH:
         try {
           const market = message.data.market;
+          console.log("market", market);
           const orderbook = this.orderBook.find((o) => o.ticker() === market);
+          console.log("orderbok", orderbook);
           if (!orderbook) {
             throw new Error("No orderbook found");
           }
@@ -201,7 +222,8 @@ export class Engine {
     side: "buy" | "sell",
     userId: string
   ) {
-    const orderbook = this.orderBook.find((o) => o.ticker() === market);
+    console.log("Creating Order for Market:", market);
+    const orderbook = this.orderBook.find((o) =>   o.ticker() === market);
     const baseAsset = market.split("_")[0];
     const quoteAsset = market.split("_")[1];
 
@@ -441,7 +463,7 @@ export class Engine {
         available: 10000000,
         locked: 0,
       },
-      TATA: {
+      ETH: {
         available: 10000000,
         locked: 0,
       },
@@ -458,7 +480,7 @@ export class Engine {
       },
     });
 
-    this.balances.set("5", {
+    this.balances.set("3", {
       [BASE_CURRENCY]: {
         available: 10000000,
         locked: 0,
@@ -479,6 +501,8 @@ export class Engine {
     quantity: string
   ) {
     const userBalance = this.balances.get(userId);
+    console.log("baseAsset",baseAsset)
+    console.log("quoteAsset",quoteAsset)
     if (!userBalance) {
       throw new Error(`User ${userId} not found`);
     }
@@ -507,18 +531,24 @@ export class Engine {
         userBalance?.[baseAsset].locked + Number(quantity);
     }
   }
-
-  onRamp(userId: string, amount: number) {
-    const UserBalance = this.balances.get(userId);
+//Add map so that all balances are returned 
+  onRamp(userId: string, amount: number,) {
+    let UserBalance = this.balances.get(userId);
     if (!UserBalance) {
-      this.balances.set(userId, {
+      console.log("user balance not found");
+      UserBalance = {
         [BASE_CURRENCY]: {
           available: amount,
           locked: 0,
         },
-      });
+      };
+      this.balances.set(userId, UserBalance);
     } else {
       UserBalance[BASE_CURRENCY].available += amount;
     }
+    return {
+      available: UserBalance[BASE_CURRENCY].available ?? 0,
+      locked: UserBalance[BASE_CURRENCY].locked ?? 0,
+    };
   }
 }
