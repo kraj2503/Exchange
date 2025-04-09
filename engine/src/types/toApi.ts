@@ -37,4 +37,11 @@ export type MessageToApi =
   | {
       type: "OPEN_ORDERS";
       payload: Order[];
-    };
+    }
+  | {
+    type: "ON_RAMP";
+    payload:{
+      available:number
+      locked:number
+    }
+  };
