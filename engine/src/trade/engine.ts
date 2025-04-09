@@ -38,7 +38,7 @@ export class Engine {
       console.log("Found Snapshot");
       const snapShotsnapShot = JSON.parse(snapShot.toString());
       this.orderBook = snapShotsnapShot.orderBook.map((o: any) => {
-        new OrderBook(
+        return new OrderBook(
           o.baseAsset,
           o.bids,
           o.asks,
@@ -56,6 +56,9 @@ export class Engine {
       console.log("new OrderBook,", this.orderBook);
       this.setBaseBalances();
     }
+    setInterval(() => {
+      this.saveSnapshot();
+    }, 1000 * 3);
   }
 
   process({
@@ -223,7 +226,7 @@ export class Engine {
     userId: string
   ) {
     console.log("Creating Order for Market:", market);
-    const orderbook = this.orderBook.find((o) =>   o.ticker() === market);
+    const orderbook = this.orderBook.find((o) => o.ticker() === market);
     const baseAsset = market.split("_")[0];
     const quoteAsset = market.split("_")[1];
 
@@ -501,8 +504,8 @@ export class Engine {
     quantity: string
   ) {
     const userBalance = this.balances.get(userId);
-    console.log("baseAsset",baseAsset)
-    console.log("quoteAsset",quoteAsset)
+    console.log("baseAsset", baseAsset);
+    console.log("quoteAsset", quoteAsset);
     if (!userBalance) {
       throw new Error(`User ${userId} not found`);
     }
@@ -531,8 +534,8 @@ export class Engine {
         userBalance?.[baseAsset].locked + Number(quantity);
     }
   }
-//Add map so that all balances are returned 
-  onRamp(userId: string, amount: number,) {
+  //Add map so that all balances are returned
+  onRamp(userId: string, amount: number) {
     let UserBalance = this.balances.get(userId);
     if (!UserBalance) {
       console.log("user balance not found");
