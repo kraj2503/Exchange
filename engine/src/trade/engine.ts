@@ -1,4 +1,3 @@
-import { StringifyOptions } from "node:querystring";
 import { RedisManager } from "../redisManager";
 import {
   CANCEL_ORDER,
