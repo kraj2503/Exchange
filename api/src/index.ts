@@ -1,5 +1,5 @@
 import express from "express";
-import cors from "cors"
+import cors from "cors";
 import { depthRouter } from "./routes/depth";
 import { orderRouter } from "./routes/order";
 import { UserRouter } from "./routes/userRouter";
@@ -13,5 +13,5 @@ app.use("/api/v1/order", orderRouter);
 app.use("/api/v1/user", UserRouter);
 
 app.listen(3000, () => {
-    console.log("Server is running on port 3000");
+  console.log("Server is running on port 3000");
 });

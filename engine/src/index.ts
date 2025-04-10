@@ -4,7 +4,7 @@ async function main() {
   const engine = new Engine();
   const redisClient = createClient();
   await redisClient.connect().then(() => {
-    console.log("main Engine connected to redis client");
+    console.log("Engine connected to redis client");
   });
 
   while (true) {
@@ -12,8 +12,8 @@ async function main() {
 
     if (!response) {
     } else {
+      console.log("poped ", response);
       engine.process(JSON.parse(response));
-      console.log("poped from redis client: ", response);
     }
   }
 }

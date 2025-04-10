@@ -38,6 +38,7 @@ export class OrderBook {
   }
 
   ticker() {
+    console.log( `${this.baseAsset}_${this.quoteAsset}`)
     return `${this.baseAsset}_${this.quoteAsset}`;
   }
 
@@ -78,7 +79,7 @@ export class OrderBook {
           fills,
         };
       }
-      this.asks.push(order); 
+      this.asks.push(order);
       return {
         executedQty,
         fills,
@@ -167,8 +168,8 @@ export class OrderBook {
       bidsObj[order.price] += order.quantity;
     }
 
-    console.log("this.bids.length",this.bids.length )
-    console.log("this.asks.length",this.asks.length )
+    console.log("this.bids.length", this.bids.length);
+    console.log("this.asks.length", this.asks.length);
     for (let i = 0; i < this.asks.length; i++) {
       const order = this.asks[i];
       if (!asksObj[order.price]) {

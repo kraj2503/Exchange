@@ -9,9 +9,15 @@ export class RedisManager {
 
   private constructor() {
     this.client = createClient();
-    this.client.connect().then(() => console.log("Redis client connected")).catch(console.error);
+    this.client
+      .connect()
+      .then(() => console.log("Redis client connected"))
+      .catch(console.error);
     this.publisher = createClient();
-    this.publisher.connect().then(() => console.log("Redis client connected")).catch(console.error);
+    this.publisher
+      .connect()
+      .then(() => console.log("Redis client connected"))
+      .catch(console.error);
   }
 
   public static getInstance() {
