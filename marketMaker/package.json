@@ -1,0 +1,16 @@
+{
+  "name": "exchange",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "npx nodemon -e ts  --exec \"tsc && node ./dist/index.js\""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@types/axios": "^0.9.36",
+    "axios": "^1.8.4"
+  }
+}
