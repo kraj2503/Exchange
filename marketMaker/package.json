@@ -10,7 +10,6 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "@types/axios": "^0.9.36",
     "axios": "^1.8.4"
   }
 }
