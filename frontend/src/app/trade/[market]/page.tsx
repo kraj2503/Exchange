@@ -14,7 +14,7 @@ export default function Page() {
   const [ticker, setTicker] = useState<Ticker | null>(null);
   const { market } = useParams<{ market: string }>();
 
-  useRedirect();
+  // useRedirect();
 
   useEffect(() => {
     getTicker(market).then(setTicker);

@@ -161,7 +161,9 @@ export class Engine {
         try {
           const market = message.data.market;
           console.log("inside get_open_orders");
-          const openOrderbook = this.orderBook.find((o) => o.ticker() == market);
+          const openOrderbook = this.orderBook.find(
+            (o) => o.ticker() == market
+          );
           if (!openOrderbook) {
             console.log(this.orderBook);
             throw new Error("No orderbook found");
@@ -381,26 +383,21 @@ export class Engine {
         if (!userBalance) {
           throw new Error("");
         }
-console.log("1")
-otherUserBalance[quoteAsset].locked =
-otherUserBalance?.[quoteAsset].locked - fill.qty * Number(fill.price);
-console.log("2")
+        otherUserBalance[quoteAsset].locked =
+          otherUserBalance?.[quoteAsset].locked - fill.qty * Number(fill.price);
 
-userBalance[quoteAsset].available =
-userBalance?.[quoteAsset].available + fill.qty * Number(fill.price);
-console.log("3")
+        userBalance[quoteAsset].available =
+          userBalance?.[quoteAsset].available + fill.qty * Number(fill.price);
 
-// Update base asset balance
+        // Update base asset balance
 
-//@ts-ignore
-otherUserBalance[baseAsset].available =
-otherUserBalance?.[baseAsset].available + fill.qty;
-console.log("4")
+        //@ts-ignore
+        otherUserBalance[baseAsset].available =
+          otherUserBalance?.[baseAsset].available + fill.qty;
 
-//@ts-ignore
-userBalance[baseAsset].locked =
-userBalance?.[baseAsset].locked - fill.qty;
-console.log("5")
+        //@ts-ignore
+        userBalance[baseAsset].locked =
+          userBalance?.[baseAsset].locked - fill.qty;
       });
     }
   }
@@ -484,6 +481,20 @@ console.log("5")
       },
       TATA: {
         available: 10000000,
+        locked: 0,
+      },
+    });
+    this.balances.set("6", {
+      [BASE_CURRENCY]: {
+        available: 10000000,
+        locked: 0,
+      },
+      TATA: {
+        available: 10000000,
+        locked: 0,
+      },
+      ETH: {
+        available: 1000000,
         locked: 0,
       },
     });
