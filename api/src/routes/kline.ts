@@ -2,10 +2,10 @@ import { Router } from "express";
 import { Client } from "pg";
 
 const pgClient = new Client({
-  user: "your_user",
+  user: "exchange",
   host: "localhost",
   database: "my_database",
-  password: "your_password",
+  password: "toughpassword",
   port: 5432,
 });
 
@@ -14,16 +14,19 @@ pgClient.connect();
 export const klineRouter = Router();
 
 klineRouter.get("/", async (req: any, res: any) => {
-  const { market, interval, startTime, endTime } = req.query;
-  if (!market || !startTime || !endTime || !interval) {
+  const { symbol, interval, startTime, endTime } = req.query;
+  console.log(symbol, interval, startTime, endTime)
+  if (!symbol || !startTime || !endTime || !interval) {
     return res.status(400).send("Missing required query parameters.");
   }
   let query;
   switch (interval) {
     case "1m":
+      console.log("execurting 1 mion")
       query = `SELECT * FROM klines_1m WHERE bucket >= $1 AND bucket <= $2`;
       break;
-    case "1h":
+      case "1h":
+      console.log("execurting 1 HR")
       query = `SELECT * FROM klines_1h WHERE  bucket >= $1 AND bucket <= $2`;
       break;
     case "1w":

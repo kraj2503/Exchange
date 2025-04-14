@@ -28,6 +28,10 @@ export async function getKlines(
     `${BASE_URL}klines?symbol=${market}&interval=${interval}&startTime=${startTime}&endTime=${endTime}`
   );
 
+
+  console.log("API Response:", response.data);
+
+
   const data: KLine[] = response.data as KLine[];
   return data.sort((x, y) => (Number(x.end) < Number(y.end) ? -1 : 1));
 }
