@@ -1,4 +1,5 @@
 import { createClient, RedisClientType } from "redis";
+import { UserManager } from "./userManager";
 
 export class SubscriptionManager {
   private static instance: SubscriptionManager;
@@ -40,6 +41,10 @@ private redisCallbackHandler(message:string,channel:string){
 }
 
 
+public unsubscribe(userId:string,subscription:string){
 
+
+
+    return 
 
 }
