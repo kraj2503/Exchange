@@ -23,7 +23,7 @@ export class SubscriptionManager {
     if (this.subscriptions.get(userId)?.includes(subscription)) {
       return;
     }
-
+    console.log("subscribing",userId)
     this.subscriptions.set(
       userId,
       (this.subscriptions.get(userId) || []).concat(subscription)
