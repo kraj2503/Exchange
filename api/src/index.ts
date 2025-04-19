@@ -3,7 +3,7 @@ import cors from "cors";
 import { depthRouter } from "./routes/depth";
 import { orderRouter } from "./routes/order";
 import { UserRouter } from "./routes/userRouter";
-import { tickersRouter } from "./routes/tickers";
+// import { tickersRouter } from "./routes/tickers";
 import { klineRouter } from "./routes/kline";
 
 const app = express();
@@ -14,11 +14,11 @@ app.use("/api/v1/depth", depthRouter);
 app.use("/api/v1/order", orderRouter);
 app.use("/api/v1/user", UserRouter);
 app.use("/api/v1/klines",klineRouter)
-app.use("/api/v1/tickers", tickersRouter);
+// app.use("/api/v1/tickers", tickersRouter);
 
 app.use((req,res)=>{
   
-  console.log("got a ping")
+  console.log("wrong api call")
   res.json({})
 })
 app.listen(3000, () => {

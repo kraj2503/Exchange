@@ -48,7 +48,7 @@ export class Engine {
       });
       console.log("Orderbook Created");
       this.balances = new Map(snapShotsnapShot.balances);
-      console.log("Balances Executed");
+      console.log("Balances Executed", this.balances);
     } else {
       console.log("Creating a new OrderBook");
       this.orderBook = [
@@ -256,17 +256,26 @@ export class Engine {
       side,
       userId,
     };
+    console.log(`order is ${order}`);
 
     const { fills, executedQty } = orderbook.addOrder(order);
     this.updateBalance(userId, baseAsset, quoteAsset, side, fills);
 
+    console.log(`fills: ${fills}, executedQty: ${executedQty}`);
+    
     this.createDbTrades(fills, market, userId);
+    console.log(`Db trades executed`);
+    
     this.updateDbOrders(order, executedQty, fills, market);
+    console.log(`Db update executed`);
     // this.publisWsDepthUpdates(fills, price, side, market);
     this.publishWsTrades(fills, userId, market);
+    console.log(`ws published`);
+    
     return { executedQty, fills, orderId: order.orderId };
   }
   createDbTrades(fills: Fill[], market: string, userId: string) {
+    console.log("creating Db Trade")
     fills.forEach((fill) => {
       RedisManager.getInstance().pushMessage({
         type: TRADE_ADDED,
@@ -283,7 +292,12 @@ export class Engine {
     });
   }
   publishWsTrades(fills: Fill[], userId: string, market: string) {
+   console.log(`inside ws trade`);
+   console.log(`fills:`,fills);
+   
     fills.forEach((fill) => {
+      console.log(`publishing msg for ${market}, fill: ${fill}`);
+      
       RedisManager.getInstance().publishMessage(`trade@${market}`, {
         stream: `trade@${market}`,
         data: {
@@ -298,48 +312,48 @@ export class Engine {
     });
   }
 
-  // publisWsDepthUpdates(
-  //   fills: Fill[],
-  //   price: string,
-  //   side: "buy" | "sell",
-  //   market: string
-  // ) {
-  //   const orderbook = this.orderBook.find((o) => o.ticker() === market);
-  //   if (!orderbook) {
-  //     return;
-  //   }
-  //   const depth = orderbook.getDepth();
-  //   if (side === "buy") {
-  //     const updatedAsks = depth?.asks.filter((x) =>
-  //       fills.map((f) => f.price).includes(x[0].toString())
-  //     );
-  //     const updatedBid = depth?.bids.find((x) => x[0] === price);
-  //     console.log("publish ws depth updates");
-  //     RedisManager.getInstance().publishMessage(`depth@${market}`, {
-  //       stream: `depth@${market}`,
-  //       data: {
-  //         a: updatedAsks,
-  //         b: updatedBid ? [updatedBid] : [],
-  //         e: "depth",
-  //       },
-  //     });
-  //   }
-  //   if (side === "sell") {
-  //     const updatedBids = depth?.bids.filter((x) =>
-  //       fills.map((f) => f.price).includes(x[0].toString())
-  //     );
-  //     const updatedAsk = depth?.asks.find((x) => x[0] === price);
-  //     console.log("publish ws depth updates");
-  //     RedisManager.getInstance().publishMessage(`depth@${market}`, {
-  //       stream: `depth@${market}`,
-  //       data: {
-  //         a: updatedAsk ? [updatedAsk] : [],
-  //         b: updatedBids,
-  //         e: "depth",
-  //       },
-  //     });
-  //   }
-  // }
+  publisWsDepthUpdates(
+    fills: Fill[],
+    price: string,
+    side: "buy" | "sell",
+    market: string
+  ) {
+    const orderbook = this.orderBook.find((o) => o.ticker() === market);
+    if (!orderbook) {
+      return;
+    }
+    const depth = orderbook.getDepth();
+    if (side === "buy") {
+      const updatedAsks = depth?.asks.filter((x) =>
+        fills.map((f) => f.price).includes(x[0].toString())
+      );
+      const updatedBid = depth?.bids.find((x) => x[0] === price);
+      console.log("publish ws depth updates");
+      RedisManager.getInstance().publishMessage(`depth@${market}`, {
+        stream: `depth@${market}`,
+        data: {
+          a: updatedAsks,
+          b: updatedBid ? [updatedBid] : [],
+          e: "depth",
+        },
+      });
+    }
+    if (side === "sell") {
+      const updatedBids = depth?.bids.filter((x) =>
+        fills.map((f) => f.price).includes(x[0].toString())
+      );
+      const updatedAsk = depth?.asks.find((x) => x[0] === price);
+      console.log("publish ws depth updates");
+      RedisManager.getInstance().publishMessage(`depth@${market}`, {
+        stream: `depth@${market}`,
+        data: {
+          a: updatedAsk ? [updatedAsk] : [],
+          b: updatedBids,
+          e: "depth",
+        },
+      });
+    }
+  }
 
   updateBalance(
     userId: string,
