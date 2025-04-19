@@ -23,28 +23,40 @@ export class SubscriptionManager {
     if (this.subscriptions.get(userId)?.includes(subscription)) {
       return;
     }
-    console.log("subscribing",userId)
+    console.log("subscribing  ", userId, "to ", subscription);
     this.subscriptions.set(
       userId,
       (this.subscriptions.get(userId) || []).concat(subscription)
     );
+
     this.reverseSubscriptions.set(
-      userId,
-      (this.reverseSubscriptions.get(userId) || []).concat(subscription)
+      subscription,
+      (this.reverseSubscriptions.get(subscription) || []).concat(userId)
+    );
+    console.log(
+      `reverse subs-  ${this.reverseSubscriptions.get(subscription)}`
     );
 
     if (this.reverseSubscriptions.get(subscription)?.length === 1) {
-      this.redisClient.subscribe(subscription, this.redisCallbackHandler);
+      this.redisClient.subscribe(
+        subscription,
+        this.redisCallbackHandler.bind(this)
+      );
     }
   }
 
   private redisCallbackHandler(message: string, channel: string) {
+    console.log(`[Redis] Message received on channel "${channel}":`, message);
+  
     const parsedMessage = JSON.parse(message);
     this.reverseSubscriptions
       .get(channel)
-      ?.forEach((s) =>
-        UserManager.getInstance().getUser(s)?.emit(parsedMessage)
-      );
+      ?.forEach((userId) => {
+        const user = UserManager.getInstance().getUser(userId);
+        if (user) {
+          user.emit(parsedMessage);
+        }
+      });
   }
 
   public unsubscribe(userId: string, subscription: string) {
@@ -56,17 +68,19 @@ export class SubscriptionManager {
       );
     }
 
-    const reverseSubscriptions = this.reverseSubscriptions.get(userId);
+    const reverseSubscriptions = this.reverseSubscriptions.get(subscription);
     if (reverseSubscriptions) {
-      this.reverseSubscriptions.set(
-        subscription,
-        reverseSubscriptions.filter((s) => s !== userId)
-      );
-      this.reverseSubscriptions.delete(subscription);
-      this.redisClient.unsubscribe(subscription);
-    }
+      const updated = reverseSubscriptions.filter((s) => s !== userId);
 
-    return;
+      if (updated.length === 0) {
+        this.reverseSubscriptions.delete(subscription);
+        this.redisClient.unsubscribe(subscription);
+      } else {
+        this.reverseSubscriptions.set(subscription, updated);
+      }
+
+      return;
+    }
   }
 
   public userLeft(userId: string) {
@@ -76,5 +90,5 @@ export class SubscriptionManager {
 
   getSubscriptions(userId: string) {
     return this.subscriptions.get(userId) || [];
-}
+  }
 }
