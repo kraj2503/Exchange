@@ -1,12 +1,7 @@
 import { Client } from "pg";
+import { login } from "./login";
 
-const client = new Client({
-  user: "exchange",
-  host: "localhost",
-  database: "my_database",
-  password: "toughpassword",
-  port: 5432,
-});
+const client = new Client(login);
 
 async function initializeDB() {
   try {
@@ -25,8 +20,9 @@ async function initializeDB() {
     `);
 
     // 2. Convert to hypertable (TimescaleDB)
-    await client.query(`SELECT create_hypertable('"ETH_INR"', 'time', if_not_exists => TRUE);`);
-
+    await client.query(
+      `SELECT create_hypertable('"ETH_INR"', 'time', if_not_exists => TRUE);`
+    );
 
     // 3. Seed sample data
     const now = new Date();
@@ -58,11 +54,11 @@ async function initializeDB() {
     FROM "ETH_INR"
     GROUP BY bucket, currency_code;
   `;
-  
-  await client.query(viewQuery("1_minute", "1 minute"));
-  await client.query(viewQuery("1_hour", "1 hour"));
-  await client.query(viewQuery("1_week", "1 week"));
-  
+
+    await client.query(viewQuery("1_minute", "1 minute"));
+    await client.query(viewQuery("1_hour", "1 hour"));
+    await client.query(viewQuery("1_week", "1 week"));
+
     console.log("✅ Database initialized and seeded successfully.");
   } catch (err) {
     console.error("❌ Error initializing database:", err);
