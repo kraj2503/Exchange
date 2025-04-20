@@ -23,15 +23,27 @@ async function main() {
     if (!response) {
     } else {
       const data: Dbmessage = JSON.parse(response);
+      
       if (data.type === "TRADE_ADDED") {
         console.log("Adding Trade");
         console.log(data);
         const price = data.data.price;
-        const timestamp = new Date(data.data.timestamp);
-        const query = `INSERT INTO  ${stockName} (time,price) VALUES ($1,
+        const timestamp = new Date(Number(data.data.timestamp));
+        console.log(`timestamp`, timestamp, typeof(timestamp));
+        
+        const query = `INSERT INTO  "${stockName}" (time,price) VALUES ($1,
                 $2)`;
+        
         const values = [timestamp, price];
-        await pgClient.query(query, values);
+       try{
+         await pgClient.query(query, values);
+        console.log(`Trade added to db`);
+        
+       }
+       catch (e){
+        console.log(`Trade failed to be added to db`,e);
+        
+       }
       }
     }
   }
