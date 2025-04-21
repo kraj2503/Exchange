@@ -1,7 +1,7 @@
 "use client";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { Button } from "./button";
-import {  useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 export const Appbar = () => {
   const { data: session } = useSession();
   const router = useRouter();
@@ -9,16 +9,25 @@ export const Appbar = () => {
   return (
     <div className="bg-gray-800 h-14 text-white w-full p-2 overflow-hidden">
       <div className="flex justify-around">
-        <div className="inline-flex items-center justify-center font-semibold hover:cursor-pointer " onClick={()=>{
-          router.push('/')
-        }}>
-          Exchange
+        <div
+          className="inline-flex items-center justify-center font-semibold hover:cursor-pointer "
+          onClick={() => {
+            router.push("/");
+          }}
+        >
+          Tradosphere
         </div>
         <div className="flex -ml-20">
           <div className={SFLM}>
-            <Button variant={"ghost"} onClick={()=>{
-              router.push('/trade/ETH_INR')
-            }}> Spot</Button>
+            <Button
+              variant={"ghost"}
+              onClick={() => {
+                router.push("/trade/ETH_INR");
+              }}
+            >
+              {" "}
+              Spot
+            </Button>
           </div>
           <div className={SFLM}>
             <Button variant={"ghost"}>Futures</Button>

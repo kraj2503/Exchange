@@ -3,19 +3,24 @@ import { KLine, Ticker, Trade } from "./types";
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
 export async function getTicker(market: string): Promise<Ticker | null> {
-  const tickers = await getTickers();
-  return tickers.find((t) => t.symbol === market) || null;
+  const res = await axios.get<Ticker>(`${BASE_URL}ticker`);
+
+  const raw = res.data;
+  return {
+    symbol: market,
+    firstPrice: "", // Add if you store this in DB
+    lastPrice: raw.currentPrice.toFixed(2),
+    priceChange: raw.change24H.value,
+    priceChangePercent: raw.change24H.percentage,
+    high: raw.high24H.toFixed(2),
+    low: raw.low24H.toFixed(2),
+    volume: raw.volume24H.toFixed(3),
+    quoteVolume: "", // optional
+    trades: "", // optional
+  };
 }
 
-export async function getTickers(): Promise<Ticker[]> {
-  //   await new Promise((resolve) => {
-  //     setTimeout(resolve, 1000);
-  //   });
 
-  const res = await axios.get<Ticker[]>(`${BASE_URL}tickers`);
-
-  return res.data;
-}
 
 export async function getKlines(
   market: string,
@@ -28,16 +33,14 @@ export async function getKlines(
     `${BASE_URL}klines?symbol=${market}&interval=${interval}&startTime=${startTime}&endTime=${endTime}`
   );
 
-
   console.log("API Response:", response.data);
-
 
   const data: KLine[] = response.data as KLine[];
   return data.sort((x, y) => (Number(x.end) < Number(y.end) ? -1 : 1));
 }
 
 export async function getDepth(market: string): Promise<Depth> {
-  const url  = `${BASE_URL}depth?symbol=${market}`
+  const url = `${BASE_URL}depth?symbol=${market}`;
   const response = await axios.get(url);
   return response.data;
 }
