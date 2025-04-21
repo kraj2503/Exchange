@@ -5,6 +5,7 @@ import { orderRouter } from "./routes/order";
 import { UserRouter } from "./routes/userRouter";
 // import { tickersRouter } from "./routes/tickers";
 import { klineRouter } from "./routes/kline";
+import { tickersRouter } from "./routes/tickersRouter";
 
 const app = express();
 app.use(cors());
@@ -14,11 +15,11 @@ app.use("/api/v1/depth", depthRouter);
 app.use("/api/v1/order", orderRouter);
 app.use("/api/v1/user", UserRouter);
 app.use("/api/v1/klines",klineRouter)
-// app.use("/api/v1/tickers", tickersRouter);
+app.use("/api/v1/tickers", tickersRouter);
 
 app.use((req,res)=>{
   
-  console.log("wrong api call")
+  console.log("wrong api call", req.originalUrl)
   res.json({})
 })
 app.listen(3000, () => {

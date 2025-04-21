@@ -1,19 +1,21 @@
 import { RedisClientType, createClient } from "redis";
 import { MessageToEngine } from "./types/to";
 import { MessageFromOrderbook } from "./types";
-
+const redisHost = process.env.REDIS_HOST? {
+  url: `redis://${process.env.REDIS_HOST}:6379`,
+}:{};
 export class RedisManager {
   private client: RedisClientType;
   private publisher: RedisClientType;
   private static instance: RedisManager;
 
   private constructor() {
-    this.client = createClient({ url: `redis://${process.env.REDIS_HOST}:6379` });
+    this.client = createClient(redisHost);
     this.client
       .connect()
       .then(() => console.log("Redis client connected"))
       .catch(console.error);
-    this.publisher = createClient({ url: `redis://${process.env.REDIS_HOST}:6379` });
+    this.publisher = createClient(redisHost);
     this.publisher
       .connect()
       .then(() => console.log("Redis client connected"))

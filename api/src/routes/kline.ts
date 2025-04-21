@@ -1,13 +1,10 @@
 import { Router } from "express";
 import { Client } from "pg";
+import { login } from "../login";
 
-const pgClient = new Client({
-  user: "exchange",
-  host: "timescaledb",
-  database: "my_database",
-  password: "toughpassword",
-  port: 5432,
-});
+console.log(`login: `,login);
+
+const pgClient = new Client(login);
 
 pgClient.connect();
 
@@ -15,22 +12,29 @@ export const klineRouter = Router();
 
 klineRouter.get("/", async (req: any, res: any) => {
   const { symbol, interval, startTime, endTime } = req.query;
-  console.log(symbol, interval, startTime, endTime)
+  console.log(symbol, interval, startTime, endTime);
   if (!symbol || !startTime || !endTime || !interval) {
     return res.status(400).send("Missing required query parameters.");
   }
   let query;
   switch (interval) {
     case "1m":
-      console.log("execurting 1 mion")
-      query = `SELECT * FROM klines_1m WHERE bucket >= $1 AND bucket <= $2`;
+      console.log("execurting 1 min");
+      query = `
+  SELECT * 
+  FROM klines_1m
+  WHERE bucket >= $1 AND bucket <= $2 AND currency_code = $3 
+  ORDER BY bucket ASC
+`;
       break;
-      case "1h":
-      console.log("execurting 1 HR")
-      query = `SELECT * FROM klines_1h WHERE  bucket >= $1 AND bucket <= $2`;
+    case "1h":
+      console.log("execurting 1 HR");
+      query = `SELECT * FROM klines_1h WHERE  bucket >= $1 AND bucket <= $2 AND currency_code = $3 
+  ORDER BY bucket ASC`;
       break;
     case "1w":
-      query = `SELECT * FROM klines_1w WHERE bucket >= $1 AND bucket <= $2`;
+      query = `SELECT * FROM klines_1wWHERE bucket >= $1 AND bucket <= $2 AND currency_code = $3 
+  ORDER BY bucket ASC`;
       break;
     default:
       return res.status(400).send("Invalid interval");
@@ -40,7 +44,7 @@ klineRouter.get("/", async (req: any, res: any) => {
     const start = new Date(Number(startTime) * 1000);
     const end = new Date(Number(endTime) * 1000);
 
-    const result = await pgClient.query(query, [start, end]);
+    const result = await pgClient.query(query, [start, end, symbol]);
     res.json(
       result.rows.map((x) => ({
         close: x.close,
