@@ -62,10 +62,14 @@ export class Chartmanager {
     this.candleSeries = chart.addSeries(CandlestickSeries);
 
     this.candleSeries.setData(
-      initialData.map((data) => ({
-        ...data,
-        time: (data.timestamp / 1000) as UTCTimestamp,
-      }))
+      initialData
+        .sort(
+          (a, b) => new Date(a.bucket).getTime() - new Date(b.bucket).getTime()
+        )
+        .map((data) => ({
+          ...data,
+          time: (data.timestamp / 1000) as UTCTimestamp,
+        }))
     );
   }
   public update(updatePrice: any) {

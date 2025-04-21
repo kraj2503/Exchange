@@ -38,7 +38,6 @@ export async function getKlines(
 
 export async function getDepth(market: string): Promise<Depth> {
   const url  = `${BASE_URL}depth?symbol=${market}`
-  console.log(url)
   const response = await axios.get(url);
   return response.data;
 }

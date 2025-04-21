@@ -17,7 +17,7 @@ export const Appbar = () => {
         <div className="flex -ml-20">
           <div className={SFLM}>
             <Button variant={"ghost"} onClick={()=>{
-              router.push('/trade/ETH_USDC')
+              router.push('/trade/ETH_INR')
             }}> Spot</Button>
           </div>
           <div className={SFLM}>

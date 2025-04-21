@@ -23,9 +23,12 @@ export interface KLine {
   volume: string;
 }
 export interface Depth {
-  bids: [string, string][],
-  asks: [string, string][],
-  lastUpdateId: string
+  payload:{
+    bids: [string, string][],
+    asks: [string, string][],
+
+    lastUpdateId: string
+  }
 }
 
 export interface Trade {

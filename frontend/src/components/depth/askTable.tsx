@@ -1,34 +1,24 @@
 export const AskTable = ({ ask }: { ask: [string, string][] }) => {
+  const sortedAsk = [...ask]
+    .sort((a, b) => parseFloat(a[0]) - parseFloat(b[0]))
+    .slice(-15); // last 15 (highest price)
+
   let currentTotal = 0;
-  const relevantAsk = ask.slice(0, 15);
-
-  const askWithtotal: [string, string, number][] = [];
-
-  for (let i = 0; i < relevantAsk.length; i++) {
-    const [price, quantityStr] = relevantAsk[i];
-    // const quantity = Number(quantityStr);
-    // console.log(quantity,quantityStr)
-    // if (quantity>0.0000) {
-    askWithtotal.push([price, quantityStr, (currentTotal += Number(quantityStr))]);
-  }
-// }
-  const maxTotal = relevantAsk.reduce(
-    (acc, [_, quantity]) => acc + Number(quantity),
-    0
+  const askWithTotal: [string, string, number][] = sortedAsk.map(
+    ([price, quantity]) => [price, quantity, (currentTotal += Number(quantity))]
   );
 
-  const reversedAskWithTotal = [...askWithtotal].reverse();
+  const maxTotal = askWithTotal[askWithTotal.length - 1]?.[2] ?? 0;
 
   return (
     <div>
-      askTable
-      {reversedAskWithTotal.map(([Price, quantity, total]) => (
+      {askWithTotal.reverse().map(([price, quantity, total]) => (
         <Ask
-          maxTotal={maxTotal}
-          key={Price}
-          price={Price}
+          key={price}
+          price={price}
           quantity={quantity}
           total={total}
+          maxTotal={maxTotal}
         />
       ))}
     </div>
@@ -48,13 +38,8 @@ function Ask({
 }) {
   return (
     <div
-      style={{
-        display: "flex",
-        position: "relative",
-        width: "100%",
-        backgroundColor: "transparent",
-        overflow: "hidden",
-      }}
+      className="flex justify-between text-xs w-full py-[2px] relative"
+      style={{ backgroundColor: "transparent" }}
     >
       <div
         style={{
@@ -65,12 +50,13 @@ function Ask({
           height: "100%",
           background: "rgba(228, 75, 68, 0.325)",
           transition: "width 0.3s ease-in-out",
+          zIndex: 0,
         }}
-      ></div>
-      <div className="flex justify-between text-xs w-full">
+      />
+      <div className="flex justify-between text-xs w-full relative z-10 px-1">
         <div>{price}</div>
         <div>{quantity}</div>
-        <div>{total?.toFixed(2)}</div>
+        <div>{total.toFixed(2)}</div>
       </div>
     </div>
   );

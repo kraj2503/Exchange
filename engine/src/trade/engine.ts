@@ -338,7 +338,7 @@ export class Engine {
       console.log(`publishing msg for ${market}, fill: ${fill}`);
 
       RedisManager.getInstance().publishMessage(`trade@${market}`, {
-        stream: `trade@${market}`,
+        stream: `trade`,
         data: {
           e: "trade",
           t: fill.tradeId,
@@ -368,12 +368,13 @@ export class Engine {
       );
       const updatedBid = depth?.bids.find((x) => x[0] === price);
       console.log("publish ws depth updates");
-      RedisManager.getInstance().publishMessage(`depth@${market}`, {
-        stream: `depth@${market}`,
+      const e = `DEPTH@${market}`;
+      RedisManager.getInstance().publishMessage(`DEPTH@${market}`, {
+        stream: `depth`,
         data: {
           a: updatedAsks,
           b: updatedBid ? [updatedBid] : [],
-          e: "depth",
+          e: e,
         },
       } as DepthUpdateMessage);
     }
@@ -382,13 +383,15 @@ export class Engine {
         fills.map((f) => f.price).includes(x[0].toString())
       );
       const updatedAsk = depth?.asks.find((x) => x[0] === price);
-      console.log("publish ws depth updates");
-      RedisManager.getInstance().publishMessage(`depth@${market}`, {
-        stream: `depth@${market}`,
+      console.log("sell side order ws publish");
+      const e = `DEPTH@${market}`;
+
+      RedisManager.getInstance().publishMessage(`DEPTH@${market}`, {
+        stream: `depth`,
         data: {
           a: updatedAsk ? [updatedAsk] : [],
           b: updatedBids,
-          e: "depth",
+          e: e,
         },
       } as DepthUpdateMessage);
     }
@@ -504,15 +507,16 @@ export class Engine {
     const depth = orderbook.getDepth();
     const updatedBids = depth?.bids.filter((x) => x[0] === price);
     const updatedAsks = depth?.asks.filter((x) => x[0] === price);
+    const e = `DEPTH@${market}`;
 
-    RedisManager.getInstance().publishMessage(`depth@${market}`, {
-      stream: `depth@${market}`,
+    RedisManager.getInstance().publishMessage(`DEPTH@${market}`, {
+      stream: `depth`,
       data: {
         a: updatedAsks.length ? updatedAsks : [[price, "0"]],
         b: updatedBids.length ? updatedAsks : [[price, "0"]],
-        e: "depth",
+        e: e,
       },
-    });
+    } as DepthUpdateMessage);
   }
 
   setBaseBalances() {

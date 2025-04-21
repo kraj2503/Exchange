@@ -34,9 +34,12 @@ export class SignalingManager {
 
     this.ws.onmessage = (event) => {
       const msg = JSON.parse(event.data);
-      const type = msg.data.e;
-
+      let type = msg.data.e;
+      type=type.split('@')
+      type = type[0]
+      
       if (this.callback[type]) {
+        
         this.callback[type].forEach(({ callback }) => {
    
           if (type === "ticker") {
@@ -51,7 +54,8 @@ export class SignalingManager {
             callback(newTicker);
           }
 
-          if (type === "depth") {
+          if (type === "DEPTH") {
+
             const updatedBids = msg.data.b;
             const updatedasks = msg.data.a;
             callback({ bids: updatedBids, asks: updatedasks });

@@ -33,11 +33,11 @@ export default function Home() {
         <h1>Test API Calls</h1>
         <h2>All Tickers</h2>
         <ul>
-          {tickers.map((ticker) => (
+          {/* {tickers.map((ticker) => (
             <li key={ticker.symbol}>
               {ticker.symbol}: {ticker.lastPrice}
             </li>
-          ))}
+          ))} */}
         </ul>
         <h2>Single Ticker</h2>
         {singleTicker ? (

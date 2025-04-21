@@ -2,6 +2,7 @@ import { createClient, RedisClientType } from "redis";
 import { ORDER_UPDATE, TRADE_ADDED } from "./types";
 import { Wsmessage } from "./types/toWs";
 import { MessageToApi } from "./types/toApi";
+import { redisHost } from ".";
 
 type DbMessage =
   | {
@@ -28,12 +29,14 @@ type DbMessage =
       };
     };
 
+
+
 export class RedisManager {
   private client: RedisClientType;
   private static instance: RedisManager;
 
   constructor() {
-    this.client = createClient({ url: `redis://${process.env.REDIS_HOST}:6379` });
+    this.client = createClient(redisHost);
     this.client.connect().then(() => {
       console.log("Client is connected");
     });
