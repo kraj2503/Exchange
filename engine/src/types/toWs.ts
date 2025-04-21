@@ -7,7 +7,7 @@ export type TickerUpdateMessage = {
     v?: string;
     V?: string;
     s?: string;
-    id: number;
+    id: string;
     e: "ticker";
   };
 };

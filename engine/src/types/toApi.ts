@@ -44,4 +44,24 @@ export type MessageToApi =
         available: number;
         locked: number;
       };
+    }
+  | {
+      type: "USER_ADDED";
+      payload: {
+        userId: string;
+        balance:BalanceMap
+      };
+    }|{
+      type:"ERROR";
+      payload:{
+        message:string
+      }
+    };
+
+
+    type BalanceMap = {
+      [currencyCode: string]: {
+        available: number;
+        locked: number;
+      };
     };

@@ -1,5 +1,6 @@
 import { RedisManager } from "../redisManager";
 import {
+  ADD_USER,
   CANCEL_ORDER,
   CREATE_ORDER,
   GET_DEPTH,
@@ -10,6 +11,11 @@ import { ON_RAMP } from "../types/toApi";
 import { Fill, Order, OrderBook } from "./orderBook";
 import { readFileSync, writeFileSync } from "node:fs";
 import { ORDER_UPDATE, TRADE_ADDED } from "../types";
+import {
+  DepthUpdateMessage,
+  TickerUpdateMessage,
+  TradeAddedMessage,
+} from "../types/toWs";
 
 interface UserBalance {
   [key: string]: {
@@ -218,6 +224,42 @@ export class Engine {
           });
         }
         break;
+      case ADD_USER:
+        try {
+          const userId = message.data.userId;
+          if (!userId) {
+            throw new Error("User ID is required");
+          }
+          const amount = message.data.amount ? Number(message.data.amount) : 0;
+          let result;
+          if (amount > 0) {
+            result = this.addUserAndOnRamp(userId, amount);
+          } else {
+            this.addUser(userId);
+            result = { available: 0, locked: 0 };
+          }
+          RedisManager.getInstance().sendToApi(clientId, {
+            type: "USER_ADDED",
+            payload: {
+              userId,
+              balance: {
+                [BASE_CURRENCY]: result,
+              },
+            },
+          });
+        } catch (e) {
+          console.log(e);
+          RedisManager.getInstance().sendToApi(clientId, {
+            type: "ERROR",
+            payload: {
+              message:
+                e instanceof Error
+                  ? e.message
+                  : "Unknown error occured while adding user",
+            },
+          });
+          break;
+        }
     }
   }
 
@@ -262,20 +304,20 @@ export class Engine {
     this.updateBalance(userId, baseAsset, quoteAsset, side, fills);
 
     console.log(`fills: ${fills}, executedQty: ${executedQty}`);
-    
+
     this.createDbTrades(fills, market, userId);
     console.log(`Db trades executed`);
-    
+
     this.updateDbOrders(order, executedQty, fills, market);
     console.log(`Db update executed`);
-    // this.publisWsDepthUpdates(fills, price, side, market);
+    this.publisWsDepthUpdates(fills, price, side, market);
     this.publishWsTrades(fills, userId, market);
     console.log(`ws published`);
-    
+
     return { executedQty, fills, orderId: order.orderId };
   }
   createDbTrades(fills: Fill[], market: string, userId: string) {
-    console.log("creating Db Trade")
+    console.log("creating Db Trade");
     fills.forEach((fill) => {
       RedisManager.getInstance().pushMessage({
         type: TRADE_ADDED,
@@ -292,12 +334,9 @@ export class Engine {
     });
   }
   publishWsTrades(fills: Fill[], userId: string, market: string) {
-   console.log(`inside ws trade`);
-   console.log(`fills:`,fills);
-   
     fills.forEach((fill) => {
       console.log(`publishing msg for ${market}, fill: ${fill}`);
-      
+
       RedisManager.getInstance().publishMessage(`trade@${market}`, {
         stream: `trade@${market}`,
         data: {
@@ -308,7 +347,7 @@ export class Engine {
           q: fill.qty.toString(),
           s: market,
         },
-      });
+      } as TradeAddedMessage);
     });
   }
 
@@ -336,7 +375,7 @@ export class Engine {
           b: updatedBid ? [updatedBid] : [],
           e: "depth",
         },
-      });
+      } as DepthUpdateMessage);
     }
     if (side === "sell") {
       const updatedBids = depth?.bids.filter((x) =>
@@ -351,7 +390,7 @@ export class Engine {
           b: updatedBids,
           e: "depth",
         },
-      });
+      } as DepthUpdateMessage);
     }
   }
 
@@ -583,5 +622,102 @@ export class Engine {
       available: UserBalance[BASE_CURRENCY].available ?? 0,
       locked: UserBalance[BASE_CURRENCY].locked ?? 0,
     };
+  }
+
+  // Add a new user with initial zero balances for all supported assets
+  addUser(userId: string): void {
+    if (this.balances.has(userId)) {
+      throw new Error(`User ${userId} already exists`);
+    }
+
+    // Create an empty balance object with all supported assets
+    const userBalance: UserBalance = {
+      [BASE_CURRENCY]: {
+        available: 0,
+        locked: 0,
+      },
+    };
+
+    // Add all assets that exist in the orderbooks
+    this.orderBook.forEach((ob) => {
+      const baseAsset = ob.ticker().split("_")[0];
+      const quoteAsset = ob.ticker().split("_")[1];
+
+      if (!userBalance[baseAsset]) {
+        userBalance[baseAsset] = { available: 0, locked: 0 };
+      }
+
+      if (!userBalance[quoteAsset] && quoteAsset !== BASE_CURRENCY) {
+        userBalance[quoteAsset] = { available: 0, locked: 0 };
+      }
+    });
+
+    this.balances.set(userId, userBalance);
+  }
+
+  // Get user balance for all assets or a specific asset
+  getUserBalance(
+    userId: string,
+    asset?: string
+  ): UserBalance | { available: number; locked: number } {
+    const userBalance = this.balances.get(userId);
+    if (!userBalance) {
+      throw new Error(`User ${userId} not found`);
+    }
+
+    if (asset) {
+      if (!userBalance[asset]) {
+        throw new Error(`Asset ${asset} not found for user ${userId}`);
+      }
+      return userBalance[asset];
+    }
+
+    return userBalance;
+  }
+
+  // Add a new user and immediately on-ramp them with base currency
+  addUserAndOnRamp(
+    userId: string,
+    amount: number
+  ): { available: number; locked: number } {
+    // First check if user already exists
+    if (this.balances.has(userId)) {
+      console.log(
+        `User ${userId} already exists, proceeding with on-ramp only`
+      );
+    } else {
+      // Create the user with zero balances
+      this.addUser(userId);
+    }
+
+    // Now on-ramp the user with the specified amount
+    return this.onRamp(userId, amount);
+  }
+
+  // Add support for a new market
+  addMarket(baseAsset: string, quoteAsset: string = BASE_CURRENCY): void {
+    const market = `${baseAsset}_${quoteAsset}`;
+
+    // Check if market already exists
+    if (this.orderBook.some((ob) => ob.ticker() === market)) {
+      throw new Error(`Market ${market} already exists`);
+    }
+
+    // Create a new orderbook for this market
+    const newOrderBook = new OrderBook(baseAsset, [], [], 0, 0);
+    this.orderBook.push(newOrderBook);
+
+    // Add the new asset to all user balances
+    this.balances.forEach((balance, userId) => {
+      if (!balance[baseAsset]) {
+        balance[baseAsset] = { available: 0, locked: 0 };
+      }
+
+      if (!balance[quoteAsset] && quoteAsset !== BASE_CURRENCY) {
+        balance[quoteAsset] = { available: 0, locked: 0 };
+      }
+    });
+
+    console.log(`Added new market: ${market}`);
   }
 }
