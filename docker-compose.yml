@@ -45,7 +45,7 @@ services:
   ws:
     build:
       context: .
-      dockerfile: Dockerfile.ws
+      dockerfile: Dockerfile.Ws
     depends_on:
       - db
       - engine
