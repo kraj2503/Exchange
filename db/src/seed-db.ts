@@ -35,7 +35,7 @@ async function initializeDB() {
       const timestamp = new Date(now.getTime() - (Math.random()*10) * 60 * 1000); // 1-minute intervals
       const price = 2000 + Math.random() * 100;
       const volume = Math.random() * 5;
-      const currency = "ETHINR";
+      const currency = "ETH_INR";
 console.log("seeding: \n",insertQuery, [timestamp, price, volume, currency]);
 
       await client.query(insertQuery, [timestamp, price, volume, currency]);

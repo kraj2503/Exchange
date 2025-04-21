@@ -24,17 +24,17 @@ klineRouter.get("/", async (req: any, res: any) => {
   SELECT * 
   FROM klines_1m
   WHERE bucket >= $1 AND bucket <= $2 AND currency_code = $3 
-  ORDER BY bucket ASC
+  
 `;
       break;
     case "1h":
       console.log("execurting 1 HR");
       query = `SELECT * FROM klines_1h WHERE  bucket >= $1 AND bucket <= $2 AND currency_code = $3 
-  ORDER BY bucket ASC`;
+  `;
       break;
     case "1w":
-      query = `SELECT * FROM klines_1wWHERE bucket >= $1 AND bucket <= $2 AND currency_code = $3 
-  ORDER BY bucket ASC`;
+      query = `SELECT * FROM klines_1w WHERE bucket >= $1 AND bucket <= $2 AND currency_code = $3 
+  `;
       break;
     default:
       return res.status(400).send("Invalid interval");
