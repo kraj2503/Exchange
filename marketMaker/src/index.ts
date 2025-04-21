@@ -8,14 +8,13 @@ const BASE_URL = "http://localhost:3000";
 
 async function main() {
   const price = 1000 + Math.random() * 10;
+    const randomQuantity = (Math.random() * 100 + 1).toFixed(2); // Between 1 and 5
   const openOrders: any = await axios.get(
     `${BASE_URL}/api/v1/order/open?userId=${USER_ID}&market=${MARKET}`
   );
 
   const totalBids = openOrders.data.filter((o: any) => o.side === "buy").length;
-  const totalAsks = openOrders.data.filter(
-    (o: any) => o.side === "sell"
-  ).length;
+  const totalAsks = openOrders.data.filter((o: any) => o.side === "sell").length;
 
   const cancelledBids = await cancelBidsMoreThan(openOrders.data, price);
   const cancelledAsks = await cancelAsksLessThan(openOrders.data, price);
@@ -25,20 +24,23 @@ async function main() {
 
   while (bidsToAdd > 0 || asksToAdd > 0) {
     if (bidsToAdd > 0) {
+    
       await axios.post(`${BASE_URL}/api/v1/order`, {
         market: MARKET,
         price: (price - Math.random() * 1).toFixed(1).toString(),
-        quantity: "1",
+        quantity: randomQuantity,
         side: "buy",
         userId: USER_ID,
       });
       bidsToAdd--;
     }
+
     if (asksToAdd > 0) {
+      const randomQuantity = (Math.random() * 100 + 1).toFixed(2); // Between 1 and 5
       await axios.post(`${BASE_URL}/api/v1/order`, {
         market: MARKET,
         price: (price + Math.random() * 1).toFixed(1).toString(),
-        quantity: "1",
+        quantity: randomQuantity,
         side: "sell",
         userId: USER_ID,
       });
@@ -47,7 +49,6 @@ async function main() {
   }
 
   await new Promise((resolve) => setTimeout(resolve, 1000));
-
   main();
 }
 
