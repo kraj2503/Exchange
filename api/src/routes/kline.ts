@@ -3,7 +3,7 @@ import { Client } from "pg";
 
 const pgClient = new Client({
   user: "exchange",
-  host: "localhost",
+  host: "timescaledb",
   database: "my_database",
   password: "toughpassword",
   port: 5432,

@@ -8,7 +8,7 @@ const pgClient = new Client(login);
 pgClient.connect();
 let stockName = "ETH_INR";
 async function main() {
-  const redisClient = createClient();
+  const redisClient = createClient({ url: `redis://${process.env.REDIS_HOST}:6379` });;
   await redisClient.connect();
 
   console.log(" DB connected to redis");

@@ -1,0 +1,114 @@
+services:
+  # DB Service
+  db:
+    build:
+      context: .
+      dockerfile: Dockerfile.db
+    networks:
+      - app-network
+      - dependencies_default  # Connect to the network created by the docker folder's compose
+    environment:
+      - POSTGRES_HOST=timescaledb  # Use container name instead of localhost
+      - POSTGRES_PORT=5432
+      - POSTGRES_USER=exchange
+      - POSTGRES_PASSWORD=toughpassword
+      - POSTGRES_DB=my_database
+      - REDIS_HOST=redis
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+        labels: "database"
+
+  # Engine Service
+  engine:
+    build:
+      context: .
+      dockerfile: Dockerfile.engine
+    depends_on:
+      - db
+    networks:
+      - app-network
+      - dependencies_default  # Connect to dependencies network
+    environment:
+      - REDIS_HOST=redis
+      - POSTGRES_HOST=timescaledb
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+        labels: "engine"
+
+  # WebSocket Service
+  ws:
+    build:
+      context: .
+      dockerfile: Dockerfile.ws
+    depends_on:
+      - db
+      - engine
+    networks:
+      - app-network
+      - dependencies_default
+    ports:
+      - "8080:8080"
+    environment:
+      - REDIS_HOST=redis
+    restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+        labels: "websocket"
+
+  # Frontend Service
+  # frontend:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile.frontend
+  #   ports:
+  #     - "3001:3000"
+  #   depends_on:
+  #     - db
+  #     - engine
+  #     - ws
+  #   networks:
+  #     - app-network
+  #   logging:
+  #     driver: "json-file"
+  #     options:
+  #       max-size: "10m"
+  #       max-file: "3"
+  #       labels: "frontend"
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    ports:
+      - 3000:3000
+    depends_on: 
+      - db
+      - engine
+    networks:
+      - app-network 
+      - dependencies_default
+    environment:
+      - REDIS_HOST=redis
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+        labels: "api"
+
+
+
+networks:
+  app-network:
+    driver: bridge
+  dependencies_default:
+    external: true  # Use the existing network created by docker-compose in docker folder

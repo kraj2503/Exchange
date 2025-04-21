@@ -1,6 +1,5 @@
 import { createClient, RedisClientType } from "redis";
 import { UserManager } from "./userManager";
-import { CLOSING } from "ws";
 
 export class SubscriptionManager {
   private static instance: SubscriptionManager;
@@ -9,7 +8,10 @@ export class SubscriptionManager {
   private redisClient: RedisClientType;
 
   private constructor() {
-    this.redisClient = createClient();
+    console.log("Connecting to Redis at:", process.env.REDIS_HOST);
+    this.redisClient = createClient({
+      url: `redis://${process.env.REDIS_HOST}:6379`,
+    });
     this.redisClient.connect();
   }
 
@@ -17,6 +19,7 @@ export class SubscriptionManager {
     if (!this.instance) {
       this.instance = new SubscriptionManager();
     }
+
     return this.instance;
   }
   public subscribe(userId: string, subscription: string) {
@@ -38,6 +41,7 @@ export class SubscriptionManager {
     );
 
     if (this.reverseSubscriptions.get(subscription)?.length === 1) {
+      console.log(`subs length is 1 so subscribing`);
       this.redisClient.subscribe(
         subscription,
         this.redisCallbackHandler.bind(this)
@@ -47,16 +51,14 @@ export class SubscriptionManager {
 
   private redisCallbackHandler(message: string, channel: string) {
     console.log(`[Redis] Message received on channel "${channel}":`, message);
-  
+
     const parsedMessage = JSON.parse(message);
-    this.reverseSubscriptions
-      .get(channel)
-      ?.forEach((userId) => {
-        const user = UserManager.getInstance().getUser(userId);
-        if (user) {
-          user.emit(parsedMessage);
-        }
-      });
+    this.reverseSubscriptions.get(channel)?.forEach((userId) => {
+      const user = UserManager.getInstance().getUser(userId);
+      if (user) {
+        user.emit(parsedMessage);
+      }
+    });
   }
 
   public unsubscribe(userId: string, subscription: string) {

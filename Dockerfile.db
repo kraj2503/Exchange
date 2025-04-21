@@ -1,0 +1,19 @@
+FROM node:23-slim
+
+WORKDIR /app
+
+# Copy package.json and package-lock.json
+COPY ./db/package*.json ./
+
+# Install dependencies including TypeScript
+RUN npm install
+RUN npm install -g typescript
+
+# Copy the rest of the code
+COPY ./db ./
+
+# Compile TypeScript
+RUN tsc -b
+
+# Wait for PostgreSQL to be ready, then run seed-db.js and index.js
+CMD ["node", "dist/index.js"]

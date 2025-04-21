@@ -1,0 +1,15 @@
+FROM node:23-slim
+
+WORKDIR /app
+
+# Copy package.json and package-lock.json
+COPY ./frontend/package*.json ./
+
+# Install dependencies
+RUN npm install
+
+# Copy the rest of the code
+COPY ./frontend ./
+
+# Start the frontend service
+CMD ["npm", "run","dev"]

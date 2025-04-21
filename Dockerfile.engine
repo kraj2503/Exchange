@@ -1,0 +1,19 @@
+FROM node:23-slim
+
+WORKDIR /app
+
+# Copy package.json and package-lock.json
+COPY ./engine/package*.json ./
+
+# Install dependencies including TypeScript and nodemon
+RUN npm install
+RUN npm install -g typescript nodemon
+
+# Copy the rest of the code
+COPY ./engine ./
+
+# Compile TypeScript before starting
+RUN tsc
+
+# Start the engine service using nodemon
+CMD ["npm", "run", "start:env"]

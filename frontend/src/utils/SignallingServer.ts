@@ -1,5 +1,5 @@
 import { Ticker } from "@/app/lib/types";
-const BASE_URL = process.env.NEXT_PUBLIC_WS_URL ?? " ";
+const BASE_URL = process.env.NEXT_PUBLIC_WS_URL ?? "ws://localhost:8080";
 
 export class SignalingManager {
   private ws: WebSocket;

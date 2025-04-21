@@ -1,0 +1,20 @@
+FROM node:23-slim
+
+WORKDIR /app
+
+# Copy package.json and package-lock.json
+COPY ./api/package*.json ./
+
+# Install dependencies including TypeScript and nodemon
+RUN npm install
+RUN npm install -g typescript nodemon
+
+# Copy the rest of the code
+COPY ./api ./
+
+# Compile TypeScript before starting
+RUN tsc
+
+# Start the engine service using nodemon
+CMD /bin/bash -c "echo 'Starting API service...' && \
+    node dist/index.js"
