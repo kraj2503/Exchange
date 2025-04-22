@@ -92,7 +92,7 @@ export default function Page() {
           </div>
         </div>
         <div className="col-span-1 overflow-">
-          <TradeUI lastprice={ticker?.lastPrice ?? ""} />
+          <TradeUI lastprice={ticker?.lastPrice ?? ""} symbol={market as string}/>
         </div>
       </div>
     </div>

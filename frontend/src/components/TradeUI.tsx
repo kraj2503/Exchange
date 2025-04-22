@@ -1,12 +1,62 @@
 import { useEffect, useState } from "react";
 import { Button } from "./ui/button";
+import { createOrderToApi } from "@/app/lib/httpClient";
+import { Bounce, ToastContainer, toast } from "react-toastify";
 
-export const TradeUI = ({ lastprice }: { lastprice: string }) => {
+export const TradeUI = ({
+  lastprice,
+  symbol,
+}: {
+  lastprice: string;
+  symbol: string;
+}) => {
   const [selected, setSelected] = useState<"buy" | "sell">("buy");
   const [market, setMarket] = useState<"limit" | "market">("market");
   const [price, setPrice] = useState<number>(0); // Start with 0
   const [quantity, setQuantity] = useState<number>(0);
   const [orderValue, setOrderValue] = useState<number>(0);
+
+  const createOrder = async () => {
+   if(price===0|| quantity===0){
+    toast.error('price or quantity is 0')
+      return
+   }
+    const res = await createOrderToApi(
+      symbol,
+      selected,
+      price as unknown as string,
+      quantity as unknown as string
+    );
+    console.log(res);
+    if (res.fills.length === 0 && res.executedQty === 0) {
+      console.log("order placed");
+      toast.success("Order Placed", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+        transition: Bounce,
+      });
+
+    } else {
+      console.log("Trade Executed");
+      toast.success("Trade Executed", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+        transition: Bounce,
+      });
+    }
+  };
 
   useEffect(() => {
     if (!isNaN(Number(lastprice))) {
@@ -15,7 +65,7 @@ export const TradeUI = ({ lastprice }: { lastprice: string }) => {
   }, [lastprice]);
 
   useEffect(() => {
-    setOrderValue(price * quantity);
+    setOrderValue(Number((price * quantity).toFixed(3)));
   }, [price, quantity]);
 
   // Function to handle numeric input
@@ -50,7 +100,6 @@ export const TradeUI = ({ lastprice }: { lastprice: string }) => {
           Sell
         </button>
       </div>
-
       <div className="mt-3">
         <button
           className={`${LimitMarket} ${
@@ -69,12 +118,10 @@ export const TradeUI = ({ lastprice }: { lastprice: string }) => {
           Market
         </button>
       </div>
-
       <div className="flex justify-between mx-1 mt-2 font-light">
         <div>Balance</div>
         <div>-</div>
       </div>
-
       <div className="flex justify-between mx-1 mt-2">
         <div className="font-light">Price</div>
         <div className="text-blue-400">Mid</div>
@@ -115,7 +162,6 @@ export const TradeUI = ({ lastprice }: { lastprice: string }) => {
           readOnly
         />
       </div>
-
       <div className="flex mt-4 ">
         <div className="flex ">
           <input type="checkbox" className="w-4 h-4 mt-1" />
@@ -131,9 +177,29 @@ export const TradeUI = ({ lastprice }: { lastprice: string }) => {
       </div>
       <div>
         <div className="mt-5 ">
-                <Button variant={'default'} className="min-w-full h-12 text-xl tracking-wider hover:scale-110 transition duration-300 ease-in-out bg-gray-500">Place Order</Button>
+          <Button
+            variant={"default"}
+            onClick={createOrder}
+            className="min-w-full h-12 text-xl tracking-wider hover:scale-110 transition duration-300 ease-in-out bg-gray-500"
+          >
+            Place Order
+          </Button>
         </div>
       </div>
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick={false}
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+        transition={Bounce}
+      />
+      ;
     </div>
   );
 };

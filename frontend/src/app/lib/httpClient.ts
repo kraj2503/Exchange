@@ -1,7 +1,28 @@
 import axios from "axios";
 import { KLine, Ticker, Trade } from "./types";
+import { ChevronsLeftRightEllipsis } from "lucide-react";
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
+
+export async function createOrderToApi(symbol:string,selected:string,price:string,quantity:string) {
+  console.log(`market`,symbol);
+  console.log(`selected`,selected);
+  console.log(`price`,price);
+  console.log(`quantity`,quantity);
+ const res = await axios.post(`${BASE_URL}order`,{
+ 
+    market:symbol,
+    price:price,
+    quantity:quantity,
+    side:selected,
+    userId:"1"
+  
+ })
+  
+return res.data
+
+  
+}
 export async function getTicker(market: string): Promise<Ticker | null> {
   const res = await axios.get<Ticker>(`${BASE_URL}ticker`);
 
