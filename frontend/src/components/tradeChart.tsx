@@ -17,8 +17,8 @@ export function TradeChart({ market }: { market: string }) {
     try {
       klineData = await getKlines(
         market,
-        "1h",
-        Math.floor((new Date().getTime() - 1000 * 60 * 60 * 24 * 7) / 1000), 
+        "1m",
+        Math.floor((new Date().getTime() - 1000 * 60 * 60 * 24 * 18) / 1000), 
         Math.floor(new Date().getTime() / 1000)
       );
     } catch (e) {
@@ -26,7 +26,7 @@ export function TradeChart({ market }: { market: string }) {
       setError("Failed to load chart data");
     }
 
-    setLoading(false); // End loading
+    setLoading(false); 
 
     if (chartRef.current && klineData.length > 0) {
      

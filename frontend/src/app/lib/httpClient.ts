@@ -1,6 +1,5 @@
 import axios from "axios";
 import { KLine, Ticker, Trade } from "./types";
-import { ChevronsLeftRightEllipsis } from "lucide-react";
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
 
@@ -50,6 +49,7 @@ export async function getKlines(
   endTime: number
 ): Promise<KLine[]> {
   console.log(BASE_URL);
+  
   const response = await axios.get(
     `${BASE_URL}klines?symbol=${market}&interval=${interval}&startTime=${startTime}&endTime=${endTime}`
   );

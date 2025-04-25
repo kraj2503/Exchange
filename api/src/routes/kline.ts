@@ -2,7 +2,7 @@ import { Router } from "express";
 import { Client } from "pg";
 import { login } from "../login";
 
-console.log(`login: `,login);
+console.log(`login: `, login);
 
 const pgClient = new Client(login);
 
@@ -43,19 +43,23 @@ klineRouter.get("/", async (req: any, res: any) => {
   try {
     const start = new Date(Number(startTime) * 1000);
     const end = new Date(Number(endTime) * 1000);
+    console.log(`start date`, start);
+    console.log(`end date`, end);
 
     const result = await pgClient.query(query, [start, end, symbol]);
+    console.log(`result`, result.rowCount);
+
     res.json(
       result.rows.map((x) => ({
-        close: x.close,
-        end: x.bucket,
-        high: x.high,
-        low: x.low,
-        open: x.open,
-        quoteVolume: x.quoteVolume,
-        start: x.start,
-        trades: x.trades,
-        volume: x.volume,
+        close:(x.close),
+        end:(x.bucket),
+        high:(x.high),
+        low:(x.low),
+        open:(x.open),
+        quoteVolume:(x.quoteVolume),
+        start:(x.start),
+        trades:(x.trades),
+        volume: (x.volume),
       }))
     );
   } catch (err) {

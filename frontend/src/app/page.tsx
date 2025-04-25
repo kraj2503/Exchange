@@ -1,6 +1,6 @@
 "use client"
 import { useEffect, useState } from "react";
-import { getTicker, getTickers } from "./lib/httpClient";
+import { getTicker } from "./lib/httpClient";
 import { Ticker } from "./lib/types";
 
 export default function Home() {
@@ -10,7 +10,7 @@ export default function Home() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const allTickers = await getTickers();
+        const allTickers = await getTicker();
         setTickers(allTickers);
 
         if (allTickers.length > 0) {
