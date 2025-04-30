@@ -39,3 +39,20 @@ export interface Trade {
   "quoteQuantity": string,
   "timestamp": number
 }
+
+export type Order = {
+
+  "orderId": string,
+  "executedQty": number,
+  "fills": ExecutedOrder[],
+  
+}
+
+type ExecutedOrder = {
+    "price": string,
+    "qty": number,
+    "tradeId": number,
+    "otherUserId": string,
+    "marketOrderId": string
+  
+}

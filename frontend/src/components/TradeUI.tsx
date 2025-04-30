@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { Button } from "./ui/button";
 import { createOrderToApi } from "@/app/lib/httpClient";
 import { Bounce, ToastContainer, toast } from "react-toastify";
+import { CloudCog } from "lucide-react";
+import { Order } from "@/app/lib/types";
 
 export const TradeUI = ({
   lastprice,
@@ -21,13 +23,13 @@ export const TradeUI = ({
     toast.error('price or quantity is 0')
       return
    }
-    const res = await createOrderToApi(
+    const res: Order = await createOrderToApi(
       symbol,
       selected,
       price as unknown as string,
       quantity as unknown as string
-    );
-    console.log(res);
+    ) as Order;
+    console.log("res",res)
     if (res.fills.length === 0 && res.executedQty === 0) {
       console.log("order placed");
       toast.success("Order Placed", {
@@ -80,7 +82,7 @@ export const TradeUI = ({
     <div className="ml-2 border-l-6 border-gray-800 bg-slate-950 h-screen p-4">
       <div className="flex mx-3 justify-center rounded-xl">
         <button
-          className={`px-14 py-3 rounded-md cursor-pointer transition font-semibold hover:text-[var(--color-green-primary-button-text)] ${
+          className={`px-10 py-2 rounded-md cursor-pointer transition font-semibold hover:text-[var(--color-green-primary-button-text)] ${
             selected === "buy"
               ? "text-[var(--color-green-primary-button-text)] bg-teal-900"
               : "text-gray-300 bg-gray-700"
@@ -89,8 +91,9 @@ export const TradeUI = ({
         >
           Buy
         </button>
+
         <button
-          className={`px-14 py-3 rounded-md cursor-pointer transition font-semibold hover:text-[var(--color-red-primary-button-text)] ${
+          className={`ml-2 px-10 py-2 rounded-md cursor-pointer transition font-semibold hover:text-[var(--color-red-primary-button-text)] ${
             selected === "sell"
               ? " bg-[var(--color-red-background-transparent)] text-[var(--color-red-primary-button-text)]"
               : " bg-gray-600 "
@@ -199,7 +202,7 @@ export const TradeUI = ({
         theme="dark"
         transition={Bounce}
       />
-      ;
+      
     </div>
   );
 };

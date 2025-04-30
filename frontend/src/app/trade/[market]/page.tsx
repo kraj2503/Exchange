@@ -14,7 +14,7 @@ export default function Page() {
   const [ticker, setTicker] = useState<Ticker | null>(null);
   const { market } = useParams<{ market: string }>();
 
-  // useRedirect();
+  useRedirect();
 
   useEffect(() => {
     getTicker(market).then(setTicker);
@@ -66,7 +66,7 @@ export default function Page() {
     // fetchTicker();
   }, [market]);
   return (
-    <div>
+    <div >
       <div className="bg-slate-950 h-screen text-white grid grid-cols-5 overflow-hidden">
         <div className="col-span-4 my-5 mx-3 ">
           <TickerBar
