@@ -62,15 +62,15 @@ tickerRouter.get("/", async (req: any, res: any) => {
 
    
     const response = {
-      currentPrice:  2039.50,
-      currentVolume: 7865.60,
+      currentPrice: currentPrice || 0.00,
+      currentVolume: currentVolume || 0.00,
       change24H: {
-        value: change24H.toFixed(3) || "5.342",
-        percentage: change24HPercentage.toFixed(2) || "2.455%",
+        value: change24H.toFixed(3) || "0.000",
+        percentage: change24HPercentage.toFixed(2) || "0.00%",
       },
-      high24H: dailyData.high || 2798,
-      low24H: dailyData.low || 1500,
-      volume24H: dailyData.volume || 473634.870,
+      high24H: dailyData.high || 0.00,
+      low24H: dailyData.low || 0.00,
+      volume24H: dailyData.volume || 0.000,
     };
 
     // Send the response back
