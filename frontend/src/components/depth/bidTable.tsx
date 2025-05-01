@@ -38,7 +38,7 @@ function Bid({
 }) {
   return (
     <div
-      className="flex justify-between text-xs w-full py-[2px] relative"
+      className="flex justify-between text-xs w-full py-[3px] relative"
       style={{ backgroundColor: "transparent" }}
     >
       <div

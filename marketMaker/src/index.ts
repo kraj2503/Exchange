@@ -2,13 +2,13 @@ import axios from "axios";
 
 const MARKET = "ETH_INR";
 const USER_ID = "6";
-const TOTAL_BIDS = 15;
-const TOTAL_ASK = 15;
+const TOTAL_BIDS = 20;
+const TOTAL_ASK = 20;
 const BASE_URL = "http://localhost:3000";
 
 async function main() {
-  const price = 1000 + Math.random() * 10;
-    const randomQuantity = (Math.random() * 100 + 1).toFixed(2); // Between 1 and 5
+  const price = 2039 + Math.random() * 10;
+    const randomQuantity = (Math.random() * 5 + 1).toFixed(2); // Between 1 and 5
   const openOrders: any = await axios.get(
     `${BASE_URL}/api/v1/order/open?userId=${USER_ID}&market=${MARKET}`
   );
@@ -36,7 +36,7 @@ async function main() {
     }
 
     if (asksToAdd > 0) {
-      const randomQuantity = (Math.random() * 100 + 1).toFixed(2); // Between 1 and 5
+      const randomQuantity = (Math.random() * 5 + 1).toFixed(2); // Between 1 and 5
       await axios.post(`${BASE_URL}/api/v1/order`, {
         market: MARKET,
         price: (price + Math.random() * 1).toFixed(1).toString(),

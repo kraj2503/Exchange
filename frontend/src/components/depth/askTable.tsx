@@ -38,7 +38,7 @@ function Ask({
 }) {
   return (
     <div
-      className="flex justify-between text-xs w-full py-[2px] relative"
+      className="flex justify-between text-xs w-full py-[3px] relative "
       style={{ backgroundColor: "transparent" }}
     >
       <div
@@ -53,7 +53,7 @@ function Ask({
           zIndex: 0,
         }}
       />
-      <div className="flex justify-between text-xs w-full relative z-10 px-1">
+      <div className="flex justify-between text-xs w-full relative z-10 px-1 ">
         <div>{price}</div>
         <div>{quantity}</div>
         <div>{total.toFixed(2)}</div>
